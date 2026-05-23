@@ -479,7 +479,11 @@ function renderVisualBracket() {
 
       <section class="champion-stage" aria-label="Campeão">
         <p>Road to 2026</p>
-        <div class="world-cup-trophy" aria-hidden="true">🏆</div>
+        <img
+          src="img/world-cup-trophy.png"
+          alt="Troféu da Copa do Mundo"
+          class="world-cup-trophy"
+        />
         <h3>Campeão</h3>
         <span>Vencedor da final</span>
       </section>

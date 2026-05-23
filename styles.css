@@ -693,7 +693,7 @@ button {
   border: 1px solid rgba(253, 224, 71, 0.3);
   border-radius: 8px;
   background:
-    radial-gradient(circle at 50% 46%, rgba(253, 224, 71, 0.2), transparent 38%),
+    radial-gradient(circle at 50% 46%, rgba(253, 224, 71, 0.24), transparent 42%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
     rgba(2, 6, 23, 0.55);
   padding: 1rem;
@@ -715,19 +715,15 @@ button {
 }
 
 .world-cup-trophy {
-  display: grid;
-  width: clamp(7rem, 12vw, 9.5rem);
-  height: clamp(7rem, 12vw, 9.5rem);
-  place-items: center;
-  margin: 1.1rem 0;
-  border-radius: 999px;
-  background:
-    radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.35), transparent 24%),
-    linear-gradient(145deg, rgba(253, 224, 71, 0.34), rgba(52, 211, 153, 0.15));
-  box-shadow:
-    0 0 46px rgba(253, 224, 71, 0.28),
-    inset 0 0 28px rgba(255, 255, 255, 0.08);
-  font-size: clamp(4rem, 8vw, 6rem);
+  display: block;
+  width: auto;
+  height: clamp(12rem, 21vw, 17rem);
+  max-width: min(100%, 12rem);
+  margin: 1rem auto 1.15rem;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 24px rgba(253, 224, 71, 0.32))
+    drop-shadow(0 16px 22px rgba(0, 0, 0, 0.38));
 }
 
 .champion-stage h3 {
@@ -1059,6 +1055,10 @@ footer {
 
   .champion-stage {
     min-height: 240px;
+  }
+
+  .world-cup-trophy {
+    height: 10.5rem;
   }
 
   .visual-match {
