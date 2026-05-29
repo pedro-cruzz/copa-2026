@@ -1,4 +1,4 @@
-const CACHE_NAME = "copa-2026-v1";
+const CACHE_NAME = "copa-2026-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -8,8 +8,7 @@ const APP_SHELL = [
   "./manifest.webmanifest",
   "./img/world-cup-trophy.png",
   "./img/icon-192.png",
-  "./img/icon-512.png",
-  "./img/icon-maskable-512.png"
+  "./img/icon-512.png"
 ];
 
 self.addEventListener("install", event => {

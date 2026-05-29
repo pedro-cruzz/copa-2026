@@ -300,7 +300,7 @@ const clearBtn = document.querySelector("#clearBtn");
 const totalMatches = document.querySelector("#totalMatches");
 const visibleCount = document.querySelector("#visibleCount");
 const brazilInfo = document.querySelector("#brazilInfo");
-const installAppBtn = document.querySelector("#installAppBtn");
+const installAppButtons = [...document.querySelectorAll("[data-install-app]")];
 let teamModalBackdrop = null;
 let lastFocusedElement = null;
 let deferredInstallPrompt = null;
@@ -777,30 +777,62 @@ function setupServiceWorker() {
   });
 }
 
+function isAppInstalled() {
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
+}
+
+function getInstallHelpMessage() {
+  const userAgent = navigator.userAgent.toLowerCase();
+  const isIos = /iphone|ipad|ipod/.test(userAgent);
+  const isAndroid = /android/.test(userAgent);
+
+  if (isAppInstalled()) {
+    return "O app ja esta instalado neste dispositivo.";
+  }
+
+  if (isIos) {
+    return "No iPhone/iPad, toque em Compartilhar e depois em Adicionar a Tela de Inicio.";
+  }
+
+  if (isAndroid) {
+    return "No Android, abra o menu do navegador e toque em Instalar app ou Adicionar a tela inicial.";
+  }
+
+  return "No Chrome ou Edge desktop, use o icone de instalar na barra de endereco ou o menu do navegador.";
+}
+
 function setupInstallPrompt() {
-  if (!installAppBtn) {
+  if (!installAppButtons.length) {
     return;
   }
+
+  installAppButtons.forEach(button => {
+    button.hidden = isAppInstalled();
+  });
 
   window.addEventListener("beforeinstallprompt", event => {
     event.preventDefault();
     deferredInstallPrompt = event;
-    installAppBtn.hidden = false;
+    installAppButtons.forEach(button => {
+      button.hidden = false;
+    });
   });
 
-  installAppBtn.addEventListener("click", async () => {
+  installAppButtons.forEach(button => button.addEventListener("click", async () => {
     if (!deferredInstallPrompt) {
+      window.alert(getInstallHelpMessage());
       return;
     }
 
-    installAppBtn.hidden = true;
     deferredInstallPrompt.prompt();
     await deferredInstallPrompt.userChoice;
     deferredInstallPrompt = null;
-  });
+  }));
 
   window.addEventListener("appinstalled", () => {
-    installAppBtn.hidden = true;
+    installAppButtons.forEach(button => {
+      button.hidden = true;
+    });
     deferredInstallPrompt = null;
   });
 }

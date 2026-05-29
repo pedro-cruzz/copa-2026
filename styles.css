@@ -186,9 +186,29 @@ button {
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-.nav-links a:hover {
+.nav-install-button {
+  min-height: 38px;
+  border: 1px solid rgba(52, 211, 153, 0.34);
+  border-radius: 8px;
+  background: rgba(52, 211, 153, 0.16);
+  color: var(--green-soft);
+  padding: 0.6rem 0.8rem;
+  font-weight: 900;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.nav-install-button[hidden] {
+  display: none;
+}
+
+.nav-links a:hover,
+.nav-install-button:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
+}
+
+.nav-install-button:hover {
+  transform: translateY(-1px);
 }
 
 .nav-links a.active {
@@ -308,10 +328,6 @@ button {
   color: #fff;
 }
 
-.install-action[hidden] {
-  display: none;
-}
-
 .primary-action:hover,
 .clear-button:hover {
   background: #6ee7b7;
@@ -414,6 +430,7 @@ button {
 .secondary-action:focus,
 .clear-button:focus,
 .team-pill:focus,
+.nav-install-button:focus,
 .modal-close-button:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.18);
