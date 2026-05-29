@@ -1,4 +1,4 @@
-const CACHE_NAME = "copa-2026-v2";
+const CACHE_NAME = "copa-2026-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -54,7 +54,7 @@ self.addEventListener("fetch", event => {
       }
 
       return fetch(request).then(response => {
-        if (!response || response.status !== 200 || response.type === "opaque") {
+        if (!response || (response.status !== 200 && response.type !== "opaque")) {
           return response;
         }
 

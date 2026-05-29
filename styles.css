@@ -965,13 +965,28 @@ button {
   vertical-align: middle;
 }
 
-.team-flag {
+.team-flag,
+.team-flag-fallback {
   width: 28px;
   height: 20px;
   flex: 0 0 auto;
+}
+
+.team-flag {
   border-radius: 4px;
   object-fit: cover;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.team-flag-fallback {
+  display: inline-grid;
+  place-items: center;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.team-flag-fallback[hidden] {
+  display: none;
 }
 
 body.modal-open {

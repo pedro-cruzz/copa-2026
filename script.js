@@ -155,6 +155,27 @@ const flagCodes = {
   "Uzbequistão": "uz"
 };
 
+const subdivisionFlagEmojis = {
+  "gb-eng": "\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC65\uDB40\uDC6E\uDB40\uDC67\uDB40\uDC7F",
+  "gb-sct": "\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC73\uDB40\uDC63\uDB40\uDC74\uDB40\uDC7F"
+};
+
+function flagEmoji(code) {
+  if (subdivisionFlagEmojis[code]) {
+    return subdivisionFlagEmojis[code];
+  }
+
+  if (!/^[a-z]{2}$/.test(code)) {
+    return "";
+  }
+
+  return code
+    .toUpperCase()
+    .split("")
+    .map(letter => String.fromCodePoint(letter.charCodeAt(0) + 127397))
+    .join("");
+}
+
 const teamCuriosityNotes = {
   "África do Sul": "Foi o primeiro país africano a sediar uma Copa do Mundo, em 2010.",
   "Alemanha": "É tetracampeã mundial e uma das seleções mais constantes em fases finais.",
@@ -214,12 +235,14 @@ function flagImg(team) {
   }
 
   return `
+    <span class="team-flag-fallback" aria-hidden="true">${flagEmoji(code)}</span>
     <img
       src="https://flagcdn.com/w40/${code}.png"
       srcset="https://flagcdn.com/w80/${code}.png 2x"
       alt="Bandeira de ${team}"
       class="team-flag"
       loading="lazy"
+      onload="this.previousElementSibling.hidden = true"
       onerror="this.remove()"
     />
   `;
