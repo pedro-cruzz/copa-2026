@@ -308,6 +308,10 @@ button {
   color: #fff;
 }
 
+.install-action[hidden] {
+  display: none;
+}
+
 .primary-action:hover,
 .clear-button:hover {
   background: #6ee7b7;
@@ -409,7 +413,8 @@ button {
 .primary-action:focus,
 .secondary-action:focus,
 .clear-button:focus,
-.team-pill:focus {
+.team-pill:focus,
+.modal-close-button:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.18);
 }
@@ -542,6 +547,8 @@ button {
 }
 
 .team-pill {
+  display: grid;
+  gap: 0.32rem;
   min-height: 48px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
@@ -557,6 +564,21 @@ button {
   color: #04111c;
 }
 
+.team-card-main {
+  min-width: 0;
+  font-weight: 900;
+}
+
+.team-card-meta {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.team-pill:hover .team-card-meta {
+  color: rgba(4, 17, 28, 0.72);
+}
+
 .bracket-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -567,12 +589,30 @@ button {
 
 .visual-bracket {
   margin-top: 1.25rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-color: rgba(125, 211, 252, 0.45) rgba(2, 6, 23, 0.35);
+  scrollbar-width: thin;
+}
+
+.visual-bracket::-webkit-scrollbar {
+  height: 0.6rem;
+}
+
+.visual-bracket::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.35);
+}
+
+.visual-bracket::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(125, 211, 252, 0.45);
 }
 
 .knockout-board {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(170px, 1.15fr) minmax(150px, 0.9fr) minmax(130px, 0.74fr) minmax(180px, 0.95fr) minmax(130px, 0.74fr) minmax(150px, 0.9fr) minmax(170px, 1.15fr);
+  grid-template-columns: minmax(170px, 1.1fr) minmax(150px, 0.88fr) minmax(130px, 0.72fr) minmax(230px, 1.18fr) minmax(130px, 0.72fr) minmax(150px, 0.88fr) minmax(170px, 1.1fr);
   align-items: stretch;
   gap: clamp(0.6rem, 1.3vw, 1rem);
   min-height: 720px;
@@ -597,10 +637,33 @@ button {
   pointer-events: none;
 }
 
+.bracket-lines {
+  position: absolute;
+  inset: clamp(1rem, 2vw, 1.35rem);
+  z-index: 0;
+  width: calc(100% - (clamp(1rem, 2vw, 1.35rem) * 2));
+  height: calc(100% - (clamp(1rem, 2vw, 1.35rem) * 2));
+  overflow: visible;
+  pointer-events: none;
+}
+
+.bracket-lines path {
+  fill: none;
+  stroke: rgba(125, 211, 252, 0.82);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.bracket-lines path:nth-child(odd) {
+  stroke: rgba(52, 211, 153, 0.74);
+}
+
 .visual-stage,
 .champion-stage {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .visual-stage {
@@ -637,7 +700,7 @@ button {
 .visual-match {
   position: relative;
   min-height: 86px;
-  border: 1px solid rgba(125, 211, 252, 0.16);
+  border: 1px solid rgba(125, 211, 252, 0.24);
   border-radius: 8px;
   background:
     linear-gradient(90deg, rgba(2, 6, 23, 0.92), rgba(15, 23, 42, 0.78)),
@@ -647,12 +710,7 @@ button {
 }
 
 .visual-match::after {
-  position: absolute;
-  top: 50%;
-  width: calc(clamp(0.6rem, 1.3vw, 1rem) + 2px);
-  height: 1px;
-  background: rgba(125, 211, 252, 0.72);
-  content: "";
+  display: none;
 }
 
 .visual-match-left::after {
@@ -690,6 +748,7 @@ button {
   place-items: center;
   align-content: center;
   min-height: 100%;
+  overflow: visible;
   border: 1px solid rgba(253, 224, 71, 0.3);
   border-radius: 8px;
   background:
@@ -716,10 +775,10 @@ button {
 
 .world-cup-trophy {
   display: block;
-  width: auto;
-  height: clamp(12rem, 21vw, 17rem);
-  max-width: min(100%, 12rem);
-  margin: 1rem auto 1.15rem;
+  width: clamp(6.4rem, 10vw, 8.7rem);
+  height: auto;
+  max-height: clamp(14rem, 25vw, 19.5rem);
+  margin: 0.85rem auto 1rem;
   object-fit: contain;
   filter:
     drop-shadow(0 0 24px rgba(253, 224, 71, 0.32))
@@ -898,6 +957,158 @@ button {
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
+body.modal-open {
+  overflow: hidden;
+}
+
+.team-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 6, 23, 0.78);
+  padding: 1rem;
+  backdrop-filter: blur(10px);
+}
+
+.team-modal-backdrop.is-open {
+  display: flex;
+}
+
+.team-modal {
+  position: relative;
+  width: min(940px, 100%);
+  max-height: min(820px, calc(100vh - 2rem));
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background:
+    linear-gradient(145deg, rgba(6, 22, 28, 0.98), rgba(8, 15, 30, 0.98)),
+    var(--panel-strong);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.46);
+}
+
+.team-modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--line);
+  padding: clamp(1rem, 3vw, 1.4rem);
+}
+
+.team-modal-head h2 {
+  margin: 0.35rem 0 0.35rem;
+  font-size: clamp(1.6rem, 4vw, 2.35rem);
+  line-height: 1.05;
+}
+
+.team-modal-head > div > span {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.modal-close-button {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 1.8rem;
+  line-height: 1;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.modal-close-button:hover {
+  background: var(--green);
+  color: #04111c;
+}
+
+.team-modal-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr);
+  gap: 1rem;
+  padding: clamp(1rem, 3vw, 1.4rem);
+}
+
+.team-modal-section {
+  min-width: 0;
+}
+
+.team-modal-section h3 {
+  margin: 0 0 0.8rem;
+  color: #dff6ff;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.modal-match-list,
+.curiosity-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.modal-match-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.46);
+  padding: 1rem;
+}
+
+.modal-match-card strong,
+.modal-match-card span {
+  display: block;
+}
+
+.modal-match-card strong {
+  color: var(--green-soft);
+  font-size: 0.95rem;
+}
+
+.modal-match-card > span {
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.modal-match-card .teams-row {
+  margin-top: 0.75rem;
+  font-size: 1rem;
+}
+
+.curiosity-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.curiosity-list li {
+  border: 1px solid rgba(125, 211, 252, 0.14);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.56);
+  color: #d8e0eb;
+  padding: 1rem;
+  line-height: 1.6;
+}
+
+.team-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  border-top: 1px solid var(--line);
+  padding: 1rem clamp(1rem, 3vw, 1.4rem);
+}
+
 footer {
   padding: 2rem 0;
   color: #718096;
@@ -944,25 +1155,30 @@ footer {
   }
 
   .knockout-board {
-    grid-template-columns: 1fr;
-    min-height: 0;
+    width: max(100%, 980px);
+    min-height: 680px;
   }
 
-  .knockout-board::before,
-  .visual-match::after {
-    display: none;
+  .team-modal-grid {
+    grid-template-columns: 1fr;
   }
 
   .champion-stage {
-    order: -1;
-    min-height: 280px;
+    min-height: 100%;
   }
 
   .visual-stage-matches,
   .visual-stage-qf .visual-stage-matches,
   .visual-stage-sf .visual-stage-matches {
-    gap: 0.75rem;
-    padding-block: 0;
+    gap: 0;
+  }
+
+  .visual-stage-qf .visual-stage-matches {
+    padding-block: 5rem;
+  }
+
+  .visual-stage-sf .visual-stage-matches {
+    padding-block: 14.4rem;
   }
 }
 
@@ -1050,19 +1266,21 @@ footer {
   }
 
   .knockout-board {
+    width: 920px;
+    min-height: 640px;
     padding: 0.9rem;
   }
 
   .champion-stage {
-    min-height: 240px;
+    min-height: 100%;
   }
 
   .world-cup-trophy {
-    height: 10.5rem;
+    width: 6.7rem;
   }
 
   .visual-match {
-    min-height: 64px;
+    min-height: 76px;
   }
 
   .section-heading h2 {
@@ -1090,5 +1308,35 @@ footer {
   .primary-action:hover,
   .clear-button:hover {
     transform: none;
+  }
+
+  .team-modal-backdrop {
+    align-items: stretch;
+    padding: 0.75rem;
+  }
+
+  .team-modal {
+    max-height: calc(100vh - 1.5rem);
+  }
+
+  .team-modal-head,
+  .team-modal-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .modal-close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .team-modal-head h2 {
+    padding-right: 3rem;
+  }
+
+  .team-modal-actions .primary-action,
+  .team-modal-actions .secondary-action {
+    width: 100%;
   }
 }

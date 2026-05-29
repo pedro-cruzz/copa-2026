@@ -7,7 +7,14 @@
     name="description"
     content="Cronograma responsivo da Copa do Mundo 2026 com filtros por seleção, grupo e destaque para os jogos do Brasil."
   />
+  <meta name="theme-color" content="#07110f" />
+  <meta name="application-name" content="Copa 2026" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Copa 2026" />
   <title>Cronograma da Copa do Mundo 2026</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png" />
+  <link rel="apple-touch-icon" href="img/icon-192.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -44,6 +51,9 @@
               <a href="#schedule" class="primary-action">Ver jogos</a>
               <a href="#groups" class="secondary-action">Conferir grupos</a>
               <a href="chaveamento.html" class="secondary-action">Ver chaveamento</a>
+              <button id="installAppBtn" type="button" class="secondary-action install-action" hidden>
+                Instalar app
+              </button>
             </div>
           </div>
 
@@ -127,7 +137,7 @@
           <p class="eyebrow green">Grupos</p>
           <h2>Seleções por grupo</h2>
         </div>
-        <p>Clique em uma seleção para ver somente os jogos dela.</p>
+        <p>Clique em uma seleção para abrir os jogos dela e algumas curiosidades.</p>
       </div>
 
       <div id="groupsGrid" class="groups-grid"></div>

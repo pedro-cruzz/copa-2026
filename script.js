@@ -155,6 +155,57 @@ const flagCodes = {
   "Uzbequistão": "uz"
 };
 
+const teamCuriosityNotes = {
+  "África do Sul": "Foi o primeiro país africano a sediar uma Copa do Mundo, em 2010.",
+  "Alemanha": "É tetracampeã mundial e uma das seleções mais constantes em fases finais.",
+  "Arábia Saudita": "Assinou uma das maiores zebras recentes ao vencer a Argentina na Copa de 2022.",
+  "Argélia": "A campanha de 1982 ficou marcada por vitórias fortes na fase de grupos.",
+  "Argentina": "É tricampeã mundial, com títulos em 1978, 1986 e 2022.",
+  "Austrália": "Passou a disputar as Eliminatórias Asiáticas depois de deixar a Oceania.",
+  "Áustria": "Foi terceira colocada na Copa de 1954, sua melhor campanha no torneio.",
+  "Bélgica": "Terminou a Copa de 2018 em terceiro lugar, sua melhor posição histórica.",
+  "Bósnia e Herzegovina": "Disputou sua primeira Copa como país independente em 2014.",
+  "Brasil": "É o maior campeão mundial e a única seleção presente em todas as Copas.",
+  "Cabo Verde": "Tem uma seleção marcada pela diáspora e pelo crescimento recente no futebol africano.",
+  "Canadá": "É uma das sedes da Copa de 2026, junto de Estados Unidos e México.",
+  "Catar": "Sediou a Copa de 2022, a primeira realizada no Oriente Médio.",
+  "Colômbia": "Chegou às quartas de final em 2014, sua melhor campanha em Copas.",
+  "Coreia do Sul": "Foi semifinalista em 2002, quando sediou o torneio com o Japão.",
+  "Costa do Marfim": "É conhecida pelo apelido Elefantes e por gerações muito físicas.",
+  "Croácia": "Foi finalista em 2018 e terceira colocada em 1998 e 2022.",
+  "Curaçao": "Carrega a herança futebolística das antigas Antilhas Holandesas.",
+  "Egito": "Foi a primeira seleção africana a disputar uma Copa, em 1934.",
+  "Equador": "Estreou em Copas em 2002 e cresceu muito no cenário sul-americano.",
+  "Escócia": "É uma das seleções mais antigas do futebol internacional.",
+  "Espanha": "Foi campeã mundial em 2010, com uma geração famosa pela posse de bola.",
+  "Estados Unidos": "É uma das sedes de 2026 e disputou a primeira Copa, em 1930.",
+  "França": "É bicampeã mundial, com títulos em 1998 e 2018.",
+  "Gana": "Chegou às quartas de final em 2010, campanha histórica para o país.",
+  "Haiti": "Disputou a Copa de 1974, sua participação mais lembrada no torneio.",
+  "Holanda": "É famosa pelo futebol total e por três finais de Copa.",
+  "Inglaterra": "Foi campeã mundial em 1966, jogando em casa.",
+  "Irã": "Estreou em Copas em 1978 e virou presença frequente no torneio.",
+  "Iraque": "Disputou sua primeira Copa do Mundo em 1986.",
+  "Japão": "Está presente em todas as Copas desde 1998.",
+  "Jordânia": "Vem se destacando no futebol asiático em campanhas recentes.",
+  "Marrocos": "Foi a primeira seleção africana a chegar às semifinais de uma Copa, em 2022.",
+  "México": "É uma das sedes de 2026 e tem forte tradição em jogos de Copa.",
+  "Noruega": "Venceu o Brasil na Copa de 1998, em um dos jogos mais lembrados do país.",
+  "Nova Zelândia": "Terminou a fase de grupos de 2010 invicta.",
+  "Panamá": "Fez sua estreia em Copas em 2018.",
+  "Paraguai": "Chegou às quartas de final em 2010, sua melhor campanha.",
+  "Portugal": "Foi terceiro colocado em 1966, com Eusébio como grande destaque.",
+  "RD Congo": "Disputou a Copa de 1974 com o nome Zaire.",
+  "República Tcheca": "Herda a tradição da Tchecoslováquia, finalista em 1934 e 1962.",
+  "Senegal": "Chegou às quartas de final em 2002, logo em sua estreia em Copas.",
+  "Suécia": "Foi vice-campeã mundial em 1958, quando sediou o torneio.",
+  "Suíça": "É presença frequente em Copas recentes e costuma ser competitiva defensivamente.",
+  "Tunísia": "Conquistou a primeira vitória africana em Copas, em 1978.",
+  "Turquia": "Foi terceira colocada na Copa de 2002.",
+  "Uruguai": "Foi o primeiro campeão mundial, em 1930, e também venceu em 1950.",
+  "Uzbequistão": "É uma força tradicional da Ásia Central e costuma revelar equipes competitivas."
+};
+
 function flagImg(team) {
   const code = flagCodes[team];
 
@@ -249,6 +300,10 @@ const clearBtn = document.querySelector("#clearBtn");
 const totalMatches = document.querySelector("#totalMatches");
 const visibleCount = document.querySelector("#visibleCount");
 const brazilInfo = document.querySelector("#brazilInfo");
+const installAppBtn = document.querySelector("#installAppBtn");
+let teamModalBackdrop = null;
+let lastFocusedElement = null;
+let deferredInstallPrompt = null;
 
 function normalizeText(text) {
   return text
@@ -406,6 +461,168 @@ function clearFilters() {
   renderSchedule();
 }
 
+function getTeamGroup(team) {
+  const foundGroup = Object.entries(groups).find(([, teams]) => teams.includes(team));
+
+  return foundGroup ? foundGroup[0] : "";
+}
+
+function getTeamMatches(team) {
+  return matches.filter(match => match.home === team || match.away === team);
+}
+
+function getOpponent(match, team) {
+  return match.home === team ? match.away : match.home;
+}
+
+function formatTeamList(teams) {
+  if (teams.length <= 1) {
+    return teams[0] || "";
+  }
+
+  return `${teams.slice(0, -1).join(", ")} e ${teams[teams.length - 1]}`;
+}
+
+function getTeamCuriosities(team) {
+  const teamMatches = getTeamMatches(team);
+  const group = getTeamGroup(team);
+  const opponents = teamMatches.map(match => getOpponent(match, team));
+  const lastMatch = teamMatches[teamMatches.length - 1];
+  const facts = [];
+
+  if (teamCuriosityNotes[team]) {
+    facts.push(teamCuriosityNotes[team]);
+  }
+
+  if (group) {
+    facts.push(`Está no Grupo ${group} e tem ${teamMatches.length} jogos cadastrados na fase de grupos.`);
+  }
+
+  if (opponents.length > 0) {
+    facts.push(`Enfrenta ${formatTeamList(opponents)} na primeira fase.`);
+  }
+
+  if (lastMatch) {
+    facts.push(`Fecha a fase de grupos em ${lastMatch.day}, às ${lastMatch.time}, contra ${getOpponent(lastMatch, team)}.`);
+  }
+
+  return facts;
+}
+
+function ensureTeamModal() {
+  if (teamModalBackdrop) {
+    return;
+  }
+
+  teamModalBackdrop = document.createElement("div");
+  teamModalBackdrop.className = "team-modal-backdrop";
+  teamModalBackdrop.setAttribute("aria-hidden", "true");
+
+  teamModalBackdrop.addEventListener("click", event => {
+    if (event.target === teamModalBackdrop || event.target.closest("[data-close-team-modal]")) {
+      closeTeamModal();
+    }
+  });
+
+  document.body.appendChild(teamModalBackdrop);
+}
+
+function openTeamModal(team) {
+  ensureTeamModal();
+
+  const teamMatches = getTeamMatches(team);
+  const group = getTeamGroup(team);
+  const curiosities = getTeamCuriosities(team);
+  lastFocusedElement = document.activeElement;
+
+  teamModalBackdrop.innerHTML = `
+    <section class="team-modal" role="dialog" aria-modal="true" aria-labelledby="teamModalTitle">
+      <header class="team-modal-head">
+        <div>
+          <p class="eyebrow green">Seleção</p>
+          <h2 id="teamModalTitle">${teamWithFlag(team)}</h2>
+          <span>Grupo ${group} • ${teamMatches.length} jogos cadastrados</span>
+        </div>
+
+        <button type="button" class="modal-close-button" aria-label="Fechar modal" data-close-team-modal>
+          ×
+        </button>
+      </header>
+
+      <div class="team-modal-grid">
+        <section class="team-modal-section">
+          <h3>Jogos</h3>
+          <div class="modal-match-list">
+            ${teamMatches.map(match => `
+              <article class="modal-match-card ${isBrazilMatch(match) ? "brazil-match" : ""}">
+                <strong>${match.day}</strong>
+                <span>${match.time} • Grupo ${match.group}</span>
+                <p class="teams-row">
+                  ${teamWithFlag(match.home)} <span class="versus">x</span> ${teamWithFlag(match.away)}
+                </p>
+              </article>
+            `).join("")}
+          </div>
+        </section>
+
+        <section class="team-modal-section">
+          <h3>Curiosidades</h3>
+          <ul class="curiosity-list">
+            ${curiosities.map(fact => `<li>${fact}</li>`).join("")}
+          </ul>
+        </section>
+      </div>
+
+      <footer class="team-modal-actions">
+        <button type="button" class="secondary-action" data-close-team-modal>Fechar</button>
+        <button type="button" class="primary-action" data-filter-team="${team}">Ver na agenda</button>
+      </footer>
+    </section>
+  `;
+
+  const filterButton = teamModalBackdrop.querySelector("[data-filter-team]");
+  const closeButton = teamModalBackdrop.querySelector("[data-close-team-modal]");
+
+  filterButton.addEventListener("click", () => filterTeamSchedule(team));
+
+  teamModalBackdrop.classList.add("is-open");
+  teamModalBackdrop.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  closeButton.focus();
+}
+
+function closeTeamModal() {
+  if (!teamModalBackdrop) {
+    return;
+  }
+
+  teamModalBackdrop.classList.remove("is-open");
+  teamModalBackdrop.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+
+  if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+    lastFocusedElement.focus();
+  }
+}
+
+function filterTeamSchedule(team) {
+  if (!searchInput || !groupFilter || !teamFilter) {
+    window.location.href = `index.html#schedule`;
+    return;
+  }
+
+  closeTeamModal();
+  searchInput.value = "";
+  groupFilter.value = "all";
+  teamFilter.value = team;
+  renderSchedule();
+
+  document.querySelector("#schedule").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
 function renderGroups() {
   if (!groupsGrid) {
     return;
@@ -425,14 +642,20 @@ function renderGroups() {
           <button
             type="button"
             class="team-pill"
-            onclick="selectTeam('${team}')"
+            data-team="${team}"
+            aria-haspopup="dialog"
           >
-            ${teamWithFlag(team)}
+            <span class="team-card-main">${teamWithFlag(team)}</span>
+            <span class="team-card-meta">Grupo ${group} • ${getTeamMatches(team).length} jogos</span>
           </button>
         `).join("")}
       </div>
     </article>
   `).join("");
+
+  groupsGrid.querySelectorAll(".team-pill").forEach(button => {
+    button.addEventListener("click", () => openTeamModal(button.dataset.team));
+  });
 }
 
 function renderBracket() {
@@ -473,6 +696,26 @@ function renderVisualBracket() {
 
   visualBracket.innerHTML = `
     <div class="knockout-board">
+      <svg class="bracket-lines" viewBox="0 0 1200 720" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M170 104 H226 V194 H288" />
+        <path d="M170 260 H226 V194" />
+        <path d="M170 416 H226 V506 H288" />
+        <path d="M170 572 H226 V506" />
+
+        <path d="M370 194 H420 V360 H470" />
+        <path d="M370 506 H420 V360" />
+        <path d="M540 360 H585" />
+
+        <path d="M1030 104 H974 V194 H912" />
+        <path d="M1030 260 H974 V194" />
+        <path d="M1030 416 H974 V506 H912" />
+        <path d="M1030 572 H974 V506" />
+
+        <path d="M830 194 H780 V360 H730" />
+        <path d="M830 506 H780 V360" />
+        <path d="M660 360 H615" />
+      </svg>
+
       ${renderVisualStage("Oitavas", roundOf16.slice(0, 4), 89, "left", "r16")}
       ${renderVisualStage("Quartas", quarterFinals.slice(0, 2), 97, "left", "qf")}
       ${renderVisualStage("Semifinal", semiFinals.slice(0, 1), 101, "left", "sf")}
@@ -519,21 +762,54 @@ function renderVisualMatch(match, gameNumber, side) {
 }
 
 function selectTeam(team) {
-  if (!searchInput || !groupFilter || !teamFilter) {
-    window.location.href = `index.html#schedule`;
+  openTeamModal(team);
+}
+
+function setupServiceWorker() {
+  if (!("serviceWorker" in navigator) || !window.isSecureContext) {
     return;
   }
 
-  searchInput.value = "";
-  groupFilter.value = "all";
-  teamFilter.value = team;
-  renderSchedule();
-
-  document.querySelector("#schedule").scrollIntoView({
-    behavior: "smooth",
-    block: "start"
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(error => {
+      console.warn("Service worker registration failed:", error);
+    });
   });
 }
+
+function setupInstallPrompt() {
+  if (!installAppBtn) {
+    return;
+  }
+
+  window.addEventListener("beforeinstallprompt", event => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    installAppBtn.hidden = false;
+  });
+
+  installAppBtn.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) {
+      return;
+    }
+
+    installAppBtn.hidden = true;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+  });
+
+  window.addEventListener("appinstalled", () => {
+    installAppBtn.hidden = true;
+    deferredInstallPrompt = null;
+  });
+}
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && teamModalBackdrop?.classList.contains("is-open")) {
+    closeTeamModal();
+  }
+});
 
 if (searchInput) {
   searchInput.addEventListener("input", renderSchedule);
@@ -553,6 +829,8 @@ if (clearBtn) {
 
 fillFilters();
 setupCounters();
+setupServiceWorker();
+setupInstallPrompt();
 renderBrazilInfo();
 renderGroups();
 renderVisualBracket();
