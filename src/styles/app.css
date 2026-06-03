@@ -2946,3 +2946,17 @@ footer {
     text-align: right;
   }
 }
+
+@media (max-width: 720px) {
+  .hero-scene {
+    height: 400px; /* Aumente a altura para dar espaço para a bola girar inteira */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Se o blur verde for um background, ajuste a posição dele aqui também */
+  }
+
+  .hero-scene-canvas {
+    height: 100% !important; /* Garante que o canvas ocupe toda a altura */
+  }
+}

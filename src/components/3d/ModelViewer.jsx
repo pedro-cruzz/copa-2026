@@ -1,5 +1,6 @@
-import { Component, Suspense } from "react";
-import { Center, Clone, Float, Html, useGLTF } from "@react-three/drei";
+import { Component, Suspense, useRef } from "react";
+import { Center, Clone, Html, useGLTF } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 
 function LoadingFallback() {
   return (
@@ -34,13 +35,30 @@ class ModelErrorBoundary extends Component {
   }
 }
 
-function LoadedModel({ modelPath, scale, position, rotation }) {
+function LoadedModel({ modelPath, scale, position, rotation, float, floatSpeed }) {
   const { scene } = useGLTF(modelPath);
+  
+  // Criamos a referência diretamente para o modelo carregado
+  const modelRef = useRef();
+
+  // A animação roda exatamente no centro do modelo agora
+  useFrame((state, delta) => {
+    if (float && modelRef.current) {
+      modelRef.current.rotation.x += delta * floatSpeed * 0.2;
+      modelRef.current.rotation.y += delta * floatSpeed * 0.3;
+      modelRef.current.rotation.z += delta * floatSpeed * 0.1;
+    }
+  });
 
   return (
-    <group position={position} rotation={rotation} scale={scale}>
+    // Posição e escala ficam no grupo externo
+    <group position={position} scale={scale}>
+      {/* O Center alinha perfeitamente o meio do objeto */}
       <Center>
-        <Clone object={scene} />
+        {/* A rotação acontece neste grupo interno, garantindo o giro no próprio eixo */}
+        <group ref={modelRef} rotation={rotation}>
+          <Clone object={scene} />
+        </group>
       </Center>
     </group>
   );
@@ -56,23 +74,20 @@ export function ModelViewer({
   className,
   fallback = null
 }) {
-  const content = (
-    <ModelErrorBoundary modelPath={modelPath} fallback={fallback}>
-      <Suspense fallback={<LoadingFallback />}>
-        <LoadedModel modelPath={modelPath} scale={scale} position={position} rotation={rotation} />
-      </Suspense>
-    </ModelErrorBoundary>
-  );
-
   return (
     <group name={className}>
-      {float ? (
-        <Float speed={floatSpeed} rotationIntensity={0.45} floatIntensity={0.75}>
-          {content}
-        </Float>
-      ) : (
-        content
-      )}
+      <ModelErrorBoundary modelPath={modelPath} fallback={fallback}>
+        <Suspense fallback={<LoadingFallback />}>
+          <LoadedModel 
+            modelPath={modelPath} 
+            scale={scale} 
+            position={position} 
+            rotation={rotation} 
+            float={float} 
+            floatSpeed={floatSpeed} 
+          />
+        </Suspense>
+      </ModelErrorBoundary>
     </group>
   );
 }

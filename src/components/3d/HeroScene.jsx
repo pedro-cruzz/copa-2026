@@ -46,7 +46,7 @@ function SceneContent({ mobile, animate }) {
       <SceneLights />
       <ModelViewer
         modelPath={TRIONDA_MODEL_PATH}
-        scale={mobile ? 2.18 : 0.62}
+        scale={mobile ? 1.75 : 0.55}
         position={mobile ? [0, -0.34, 0] : [-0.12, -0.02, 0]}
         rotation={[0.12, -0.35, 0.08]}
         float={animate}
@@ -60,7 +60,7 @@ function SceneContent({ mobile, animate }) {
 export function HeroScene() {
   const mobile = useMediaQuery("(max-width: 720px)");
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
-  const animateScene = !mobile && !reducedMotion;
+  const animateScene = !reducedMotion;
 
   return (
     <div className="hero-scene">
@@ -71,7 +71,7 @@ export function HeroScene() {
         performance={{ min: 0.5 }}
         gl={{ antialias: mobile, alpha: true, powerPreference: mobile ? "low-power" : "high-performance" }}
         shadows={false}
-        camera={{ position: mobile ? [0, 0, 6.85] : [0, 0.72, 4.1], fov: mobile ? 38 : 43 }}
+        camera={{ position: mobile ? [0, 0, 12] : [0, 0.72, 4.1], fov: mobile ? 38 : 43 }}
       >
         <Suspense fallback={null}>
           <SceneContent mobile={mobile} animate={animateScene} />
