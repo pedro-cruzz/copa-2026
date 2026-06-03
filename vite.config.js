@@ -6,7 +6,8 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: "prompt",
+      registerType: "autoUpdate",
+      cleanupOutdatedCaches: true,
       includeAssets: [
         "img/icon-192.png",
         "img/icon-512.png",
