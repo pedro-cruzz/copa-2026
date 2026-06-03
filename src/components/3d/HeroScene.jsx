@@ -46,8 +46,8 @@ function SceneContent({ mobile, animate }) {
       <SceneLights />
       <ModelViewer
         modelPath={TRIONDA_MODEL_PATH}
-        scale={mobile ? 0.54 : 0.62}
-        position={mobile ? [0, -0.12, 0] : [-0.12, -0.02, 0]}
+        scale={mobile ? 2.18 : 0.62}
+        position={mobile ? [0, -0.34, 0] : [-0.12, -0.02, 0]}
         rotation={[0.12, -0.35, 0.08]}
         float={animate}
         floatSpeed={mobile ? 1.08 : 1.18}
@@ -66,12 +66,12 @@ export function HeroScene() {
     <div className="hero-scene">
       <Canvas
         className="hero-scene-canvas"
-        dpr={mobile ? [0.85, 1] : [0.9, 1.15]}
+        dpr={mobile ? [1, 1.35] : [0.9, 1.15]}
         frameloop="demand"
         performance={{ min: 0.5 }}
-        gl={{ antialias: false, alpha: true, powerPreference: mobile ? "low-power" : "high-performance" }}
+        gl={{ antialias: mobile, alpha: true, powerPreference: mobile ? "low-power" : "high-performance" }}
         shadows={false}
-        camera={{ position: mobile ? [0, 0.55, 4.3] : [0, 0.72, 4.1], fov: mobile ? 48 : 43 }}
+        camera={{ position: mobile ? [0, 0, 6.85] : [0, 0.72, 4.1], fov: mobile ? 38 : 43 }}
       >
         <Suspense fallback={null}>
           <SceneContent mobile={mobile} animate={animateScene} />

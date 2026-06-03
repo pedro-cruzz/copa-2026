@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { RefreshCw } from "lucide-react";
 import { BackgroundFX } from "./components/BackgroundFX";
 import { Navigation } from "./components/Navigation";
-import { BracketPage } from "./sections/BracketPage";
 import { GroupsSection } from "./sections/GroupsSection";
 import { Hero } from "./sections/Hero";
 import { ScheduleSection } from "./sections/ScheduleSection";
 import { SummaryCards } from "./sections/SummaryCards";
 import { TeamModal } from "./sections/TeamModal";
+
+const BracketPage = lazy(() => import("./sections/BracketPage").then((module) => ({ default: module.BracketPage })));
 
 function UpdateToast() {
   const {
@@ -85,7 +86,13 @@ export default function App() {
   return (
     <>
       <BackgroundFX />
-      {isBracketPage ? <BracketPage /> : <HomePage />}
+      {isBracketPage ? (
+        <Suspense fallback={null}>
+          <BracketPage />
+        </Suspense>
+      ) : (
+        <HomePage />
+      )}
       <UpdateToast />
     </>
   );
