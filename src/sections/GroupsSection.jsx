@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { groups, getTeamMatches } from "../data/tournament";
 import { SectionHeader } from "../components/SectionHeader";
 import { TeamName } from "../components/TeamFlag";
@@ -13,14 +12,10 @@ export function GroupsSection({ onSelectTeam }) {
       />
 
       <div className="groups-grid">
-        {Object.entries(groups).map(([group, teams], index) => (
-          <motion.article
+        {Object.entries(groups).map(([group, teams]) => (
+          <article
             className="group-card"
             key={group}
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ delay: (index % 4) * 0.04, duration: 0.42 }}
           >
             <div className="group-head">
               <h3>Grupo {group}</h3>
@@ -38,7 +33,7 @@ export function GroupsSection({ onSelectTeam }) {
                 </button>
               ))}
             </div>
-          </motion.article>
+          </article>
         ))}
       </div>
     </section>

@@ -36,8 +36,10 @@ export function SummaryCards() {
             viewport={{ once: true, margin: "-80px" }}
             transition={{ delay: index * 0.06, duration: 0.45 }}
           >
-            <Icon size={22} aria-hidden="true" />
-            <p className="eyebrow">{card.eyebrow}</p>
+            <div className="info-card-heading">
+              <Icon size={20} aria-hidden="true" />
+              <p className="eyebrow">{card.eyebrow}</p>
+            </div>
             <h2>{card.title}</h2>
             <p>{card.text}</p>
           </motion.article>

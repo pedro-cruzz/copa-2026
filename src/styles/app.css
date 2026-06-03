@@ -744,7 +744,18 @@ select:focus-visible {
   padding: 20px;
 }
 
-.info-card svg {
+.info-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.info-card-heading .eyebrow {
+  margin: 0;
+}
+
+.info-card-heading svg {
+  flex: 0 0 auto;
   color: var(--signal);
 }
 
@@ -1756,7 +1767,7 @@ footer {
   color: #dce5df;
 }
 
-.info-card svg {
+.info-card-heading svg {
   color: #aebbb7;
 }
 
@@ -1839,5 +1850,323 @@ footer {
 
   .sketchfab-attribution {
     display: none;
+  }
+}
+
+/* Performance pass: keep the dark glass look without expensive live blurs. */
+.topbar,
+.bottom-nav,
+.filter-bar,
+.metrics-grid article,
+.info-card,
+.group-card,
+.day-card,
+.bracket-card,
+.brazil-highlight,
+.broadcast-card,
+.team-modal,
+.update-toast {
+  backdrop-filter: none;
+}
+
+.topbar,
+.bottom-nav,
+.filter-bar {
+  background: rgba(4, 9, 9, 0.9);
+}
+
+.metrics-grid article,
+.info-card,
+.group-card,
+.day-card,
+.bracket-card,
+.brazil-highlight,
+.broadcast-card {
+  background: rgba(10, 17, 16, 0.74);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+.bg-grid {
+  mask-image: none;
+  opacity: 0.42;
+}
+
+.bg-dots {
+  opacity: 0.08;
+}
+
+.bg-scanline {
+  display: none;
+}
+
+.summary-grid,
+.section-block {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 760px;
+}
+
+/* Final mobile pass: keep later desktop overrides from leaking into phones. */
+@media (max-width: 720px) {
+  html,
+  body {
+    width: 100%;
+  }
+
+  .page-shell {
+    width: 100%;
+    padding: 10px 10px 92px;
+  }
+
+  .topbar {
+    position: relative;
+    top: 0;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px;
+  }
+
+  .brand-mark {
+    width: 100%;
+    padding-right: 4px;
+  }
+
+  .brand-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .brand-title {
+    font-size: 0.86rem;
+  }
+
+  .brand-subtitle {
+    font-size: 0.72rem;
+  }
+
+  .hero-shell,
+  .page-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    margin-top: 10px;
+    padding: 14px;
+  }
+
+  .hero-copy {
+    gap: 18px;
+  }
+
+  .hero-content h1,
+  .page-hero h1 {
+    max-width: 100%;
+    margin-top: 14px;
+    font-size: clamp(2.15rem, 11.2vw, 3rem);
+    line-height: 1.02;
+  }
+
+  .hero-content p,
+  .page-hero p,
+  .section-heading > p {
+    max-width: 100%;
+    font-size: 0.95rem;
+    line-height: 1.58;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .primary-action,
+  .secondary-action,
+  .clear-button {
+    min-height: 46px;
+    width: 100%;
+    padding-inline: 12px;
+  }
+
+  .hero-visual,
+  .hero-scene,
+  .sketchfab-ball-shell {
+    min-height: clamp(230px, 62vw, 310px);
+  }
+
+  .hero-visual {
+    order: 2;
+  }
+
+  .hero-copy {
+    order: 1;
+  }
+
+  .brazil-strip {
+    order: 3;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .brazil-list,
+  .metrics-grid,
+  .summary-grid,
+  .groups-grid,
+  .bracket-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .metrics-grid {
+    gap: 8px;
+  }
+
+  .metrics-grid article,
+  .info-card,
+  .group-card,
+  .day-card,
+  .bracket-card,
+  .brazil-highlight {
+    box-shadow: none;
+  }
+
+  .section-block {
+    margin-top: 28px;
+  }
+
+  .section-heading {
+    gap: 8px;
+  }
+
+  .section-heading h2 {
+    font-size: clamp(1.45rem, 8vw, 2rem);
+    line-height: 1.1;
+  }
+
+  .filter-bar {
+    position: static;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .control-wrap,
+  .control-select,
+  .clear-button {
+    min-height: 44px;
+  }
+
+  .control-wrap input {
+    font-size: 0.95rem;
+  }
+
+  .group-card {
+    padding: 14px;
+  }
+
+  .group-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .team-pill {
+    min-height: 54px;
+    padding: 10px;
+  }
+
+  .team-card-meta {
+    font-size: 0.74rem;
+  }
+
+  .day-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px;
+  }
+
+  .match-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    padding: 14px;
+  }
+
+  .match-time {
+    font-size: 1rem;
+  }
+
+  .status-badge {
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .team-modal-backdrop {
+    align-items: stretch;
+    padding: 8px;
+  }
+
+  .team-modal {
+    max-height: calc(100dvh - 16px);
+  }
+
+  .team-modal-head,
+  .team-modal-grid,
+  .team-modal-actions {
+    padding: 14px;
+  }
+
+  .team-modal-head {
+    gap: 10px;
+  }
+
+  .team-modal-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .team-modal-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .bottom-nav {
+    right: 8px;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    left: 8px;
+    gap: 2px;
+    padding: 5px;
+  }
+
+  .bottom-nav a {
+    min-height: 50px;
+    font-size: 0.64rem;
+  }
+
+  .update-toast {
+    right: 8px;
+    bottom: calc(74px + env(safe-area-inset-bottom));
+    left: 8px;
+  }
+}
+
+@media (max-width: 380px) {
+  .page-shell {
+    padding-inline: 8px;
+  }
+
+  .hero-shell,
+  .page-hero {
+    padding: 12px;
+  }
+
+  .hero-content h1,
+  .page-hero h1 {
+    font-size: clamp(1.9rem, 11vw, 2.45rem);
+  }
+
+  .brand-subtitle {
+    display: none;
+  }
+
+  .bottom-nav a span {
+    font-size: 0.6rem;
   }
 }

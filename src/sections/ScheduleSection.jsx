@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { motion } from "framer-motion";
 import { RotateCcw, Search } from "lucide-react";
 import { getMatchStatus, StatusBadge } from "../components/StatusBadge";
 import { SectionHeader } from "../components/SectionHeader";
@@ -92,13 +91,9 @@ export function ScheduleSection({ filters, setFilters }) {
           <div className="empty-state">Nenhum jogo encontrado com esses filtros.</div>
         ) : (
           Object.entries(matchesByDay).map(([day, dayMatches]) => (
-            <motion.article
+            <article
               key={day}
               className="day-card"
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.4 }}
             >
               <header className="day-head">
                 <h3>{day}</h3>
@@ -108,22 +103,20 @@ export function ScheduleSection({ filters, setFilters }) {
                 {dayMatches.map((match) => {
                   const status = getMatchStatus(match, nextMatch);
                   return (
-                    <motion.article
+                    <article
                       key={`${match.date}-${match.time}-${match.home}`}
                       className={`match-card ${isBrazilMatch(match) ? "brazil-match" : ""}`}
-                      whileHover={{ y: -2 }}
-                      transition={{ duration: 0.18 }}
                     >
                       <strong className="match-time">{match.time}</strong>
                       <StatusBadge status={status} />
                       <p>
                         <TeamName team={match.home} /> <span className="versus">x</span> <TeamName team={match.away} />
                       </p>
-                    </motion.article>
+                    </article>
                   );
                 })}
               </div>
-            </motion.article>
+            </article>
           ))
         )}
       </div>
