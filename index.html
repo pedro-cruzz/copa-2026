@@ -1,165 +1,22 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta
-    name="description"
-    content="Cronograma responsivo da Copa do Mundo 2026 com filtros por seleção, grupo e destaque para os jogos do Brasil."
-  />
-  <meta name="theme-color" content="#07110f" />
-  <meta name="application-name" content="Copa 2026" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Copa 2026" />
-  <title>Cronograma da Copa do Mundo 2026</title>
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png" />
-  <link rel="apple-touch-icon" href="img/icon-192.png" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <main class="page-shell">
-    <header class="hero-shell">
-      <div class="hero-grid">
-        <section class="hero-copy">
-          <nav class="top-nav" aria-label="Navegação principal">
-            <a href="index.html" class="brand-mark">
-              <span class="brand-icon" aria-hidden="true">🏆</span>
-              <span>
-                <span class="brand-title">Copa 2026</span>
-                <span class="brand-subtitle">Horário de Brasília</span>
-              </span>
-            </a>
-
-            <div class="nav-links">
-              <a href="#groups">Grupos</a>
-              <a href="chaveamento.html">Chaveamento</a>
-              <a href="#schedule">Jogos</a>
-              <button type="button" class="nav-install-button" data-install-app>
-                Instalar
-              </button>
-            </div>
-          </nav>
-
-          <div class="hero-content">
-            <span class="tag">Agenda interativa</span>
-
-            <h1>Jogos da Copa 2026, sem perder nenhum horário.</h1>
-
-            <p>
-              Filtre por seleção ou grupo, acompanhe os jogos do Brasil e acesse o chaveamento em uma aba própria feita para celular e desktop.
-            </p>
-
-            <div class="hero-actions">
-              <a href="#schedule" class="primary-action">Ver jogos</a>
-              <a href="#groups" class="secondary-action">Conferir grupos</a>
-              <a href="chaveamento.html" class="secondary-action">Ver chaveamento</a>
-            </div>
-          </div>
-
-          <div class="metrics-grid">
-            <div class="metric-tile">
-              <strong id="totalMatches">0</strong>
-              <span>jogos cadastrados</span>
-            </div>
-            <div class="metric-tile">
-              <strong>12</strong>
-              <span>grupos</span>
-            </div>
-            <div class="metric-tile">
-              <strong>48</strong>
-              <span>seleções</span>
-            </div>
-          </div>
-        </section>
-
-        <aside class="hero-panel">
-          <div>
-            <p class="eyebrow yellow">Destaque</p>
-            <h2>Jogos do Brasil</h2>
-            <p>
-              Os confrontos do Brasil ficam realçados automaticamente na lista principal.
-            </p>
-          </div>
-
-          <div id="brazilInfo" class="brazil-list"></div>
-        </aside>
-      </div>
-    </header>
-
-    <section class="filter-bar" aria-label="Filtros de jogos">
-      <label class="sr-only" for="searchInput">Buscar seleção</label>
-      <input
-        id="searchInput"
-        type="search"
-        placeholder="Buscar seleção: Brasil, Argentina, México..."
-        class="control"
-      />
-
-      <label class="sr-only" for="groupFilter">Filtrar por grupo</label>
-      <select id="groupFilter" class="control">
-        <option value="all">Todos os grupos</option>
-      </select>
-
-      <label class="sr-only" for="teamFilter">Filtrar por seleção</label>
-      <select id="teamFilter" class="control">
-        <option value="all">Todas as seleções</option>
-      </select>
-
-      <button id="clearBtn" type="button" class="clear-button">
-        Limpar
-      </button>
-    </section>
-
-    <section class="summary-grid" aria-label="Resumo do torneio">
-      <article class="info-card">
-        <p class="eyebrow green">Formato</p>
-        <h2>48 seleções</h2>
-        <p>A fase de grupos tem 12 grupos com 4 seleções. Avançam os 2 primeiros de cada grupo e os 8 melhores terceiros colocados.</p>
-      </article>
-
-      <article class="info-card">
-        <p class="eyebrow yellow">Fase de grupos</p>
-        <h2>72 jogos</h2>
-        <p>Cada seleção joga 3 vezes. Os jogos da última rodada de cada grupo acontecem simultaneamente.</p>
-      </article>
-
-      <article class="info-card">
-        <p class="eyebrow blue">Mata-mata</p>
-        <h2>32 classificados</h2>
-        <p>O mata-mata começa na fase de 32 avos de final e segue até a final.</p>
-      </article>
-    </section>
-
-    <section id="groups" class="section-block">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow green">Grupos</p>
-          <h2>Seleções por grupo</h2>
-        </div>
-        <p>Clique em uma seleção para abrir os jogos dela e algumas curiosidades.</p>
-      </div>
-
-      <div id="groupsGrid" class="groups-grid"></div>
-    </section>
-
-    <section id="schedule" class="section-block">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow yellow">Agenda</p>
-          <h2>Jogos</h2>
-        </div>
-        <span id="visibleCount" class="visible-count"></span>
-      </div>
-
-      <div id="scheduleList" class="schedule-list"></div>
-    </section>
-
-    <footer>
-      Dados organizados para visualização. Confira a tabela oficial antes dos jogos, pois horários podem mudar.
-    </footer>
-  </main>
-
-  <script src="script.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="Cronograma premium da Copa do Mundo 2026 com filtros por seleção, grupos, chaveamento e modo app instalável."
+    />
+    <meta name="theme-color" content="#00ff88" />
+    <meta name="application-name" content="Copa 2026" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Copa 2026" />
+    <title>Copa 2026 Live Hub</title>
+    <link rel="icon" type="image/png" sizes="192x192" href="/img/icon-192.png" />
+    <link rel="apple-touch-icon" href="/img/icon-192.png" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

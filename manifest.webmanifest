@@ -2,12 +2,12 @@
   "name": "Copa 2026",
   "short_name": "Copa 2026",
   "description": "Agenda, grupos e chaveamento da Copa do Mundo 2026.",
-  "start_url": "./index.html",
-  "scope": "./",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#07110f",
-  "theme_color": "#07110f",
+  "background_color": "#020403",
+  "theme_color": "#00ff88",
   "categories": ["sports", "utilities"],
   "icons": [
     {
@@ -27,12 +27,12 @@
     {
       "name": "Jogos",
       "short_name": "Jogos",
-      "url": "./index.html#schedule"
+      "url": "/#schedule"
     },
     {
       "name": "Chaveamento",
       "short_name": "Chaves",
-      "url": "./chaveamento.html"
+      "url": "/chaveamento.html"
     }
   ]
 }
