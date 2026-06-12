@@ -36,7 +36,7 @@ export function TrophyModel() {
 
   return (
     <Center>
-      <primitive object={trophy} rotation={[0, 0, 0]} scale={0.78} />
+      <primitive object={trophy} rotation={[0, 0, 0]} scale={0.9} />
     </Center>
   );
 }

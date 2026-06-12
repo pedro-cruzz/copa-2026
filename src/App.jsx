@@ -5,6 +5,7 @@ import { BackgroundFX } from "./components/BackgroundFX";
 import { Navigation } from "./components/Navigation";
 import { GroupsSection } from "./sections/GroupsSection";
 import { Hero } from "./sections/Hero";
+import { LiveCenterSection } from "./sections/LiveCenterSection";
 import { ScheduleSection } from "./sections/ScheduleSection";
 import { SummaryCards } from "./sections/SummaryCards";
 import { TeamModal } from "./sections/TeamModal";
@@ -72,6 +73,7 @@ function HomePage() {
       <Navigation page="home" />
       <Hero />
       <SummaryCards />
+      <LiveCenterSection />
       <GroupsSection onSelectTeam={setSelectedTeam} />
       <ScheduleSection filters={filters} setFilters={setFilters} />
       <TeamModal team={selectedTeam} onClose={() => setSelectedTeam(null)} onFilterTeam={filterTeam} />

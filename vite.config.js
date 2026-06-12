@@ -1,13 +1,71 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
-export default defineConfig({
+const SPORTMONKS_BASE_URL = "https://api.sportmonks.com/v3/football";
+
+function sportmonksDevProxy(env) {
+  return {
+    name: "sportmonks-dev-proxy",
+    configureServer(server) {
+      server.middlewares.use("/api/sportmonks", async (request, response) => {
+        const token = env.SPORTMONKS_API_TOKEN || env.VITE_SPORTMONKS_API_TOKEN;
+
+        if (!token) {
+          response.statusCode = 500;
+          response.setHeader("Content-Type", "application/json");
+          response.end(JSON.stringify({ message: "Configure SPORTMONKS_API_TOKEN ou VITE_SPORTMONKS_API_TOKEN no .env." }));
+          return;
+        }
+
+        const requestUrl = new URL(request.url || "/", "http://localhost");
+        const path = requestUrl.searchParams.get("path");
+
+        if (!path || !path.startsWith("/") || path.startsWith("//") || path.includes("://")) {
+          response.statusCode = 400;
+          response.setHeader("Content-Type", "application/json");
+          response.end(JSON.stringify({ message: "Parametro path invalido." }));
+          return;
+        }
+
+        const target = new URL(`${SPORTMONKS_BASE_URL}${path}`);
+
+        requestUrl.searchParams.forEach((value, key) => {
+          if (key !== "path") {
+            target.searchParams.set(key, value);
+          }
+        });
+
+        target.searchParams.set("api_token", token);
+
+        try {
+          const sportmonksResponse = await fetch(target);
+          const body = await sportmonksResponse.text();
+
+          response.statusCode = sportmonksResponse.status;
+          response.setHeader("Content-Type", sportmonksResponse.headers.get("content-type") || "application/json");
+          response.setHeader("Cache-Control", "no-store");
+          response.end(body);
+        } catch {
+          response.statusCode = 502;
+          response.setHeader("Content-Type", "application/json");
+          response.end(JSON.stringify({ message: "Nao foi possivel conectar na Sportmonks." }));
+        }
+      });
+    }
+  };
+}
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
+
+  return {
   server: {
     allowedHosts: ["cheating-italics-platform.ngrok-free.dev"]
   },
   plugins: [
     react(),
+    sportmonksDevProxy(env),
     VitePWA({
       registerType: "autoUpdate",
       cleanupOutdatedCaches: true,
@@ -93,4 +151,5 @@ export default defineConfig({
       }
     }
   }
+  };
 });

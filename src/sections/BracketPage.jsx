@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowLeft, Trophy } from "lucide-react";
-import { Suspense } from "react";
+import { Suspense, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import { bracket } from "../data/tournament";
@@ -146,9 +146,9 @@ function DesktopBracketSide({ side }) {
   );
 }
 
-function TrophyScene() {
+function TrophyScene({ className = "desktop-trophy-scene" }) {
   return (
-    <div className="desktop-trophy-scene" aria-hidden="true">
+    <div className={className} aria-hidden="true">
       <Canvas dpr={[1, 1.5]} frameloop="demand" gl={{ antialias: true, alpha: true }} camera={{ position: [0, 0.18, 4.8], fov: 31 }}>
         <ambientLight intensity={1.3} />
         <directionalLight position={[2.8, 4.2, 3.4]} intensity={2.8} color="#fff2c4" />
@@ -288,7 +288,7 @@ function VisualBracket() {
 
         <section className="desktop-champion-stage" aria-label="Campeão">
           <p>Road to 2026</p>
-          <TrophyScene />
+          <div className="desktop-trophy-landing" aria-hidden="true" />
           <h3>Campeão</h3>
           <span>Vencedor da final</span>
           <div className="desktop-decision-grid" hidden>
@@ -372,13 +372,34 @@ function MobileBracketFlow() {
 
 export function BracketPage() {
   const mobile = useMediaQuery("(max-width: 720px)");
+  const trophyFlowRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: trophyFlowRef,
+    offset: ["start 10%", "end 42%"]
+  });
+  const trophyX = useTransform(scrollYProgress, [0, 0.45, 1], [0, -245, -445]);
+  const trophyY = useTransform(scrollYProgress, [0, 0.45, 1], [96, 460, 900]);
+  const trophyScale = useTransform(scrollYProgress, [0, 0.45, 1], [1, 0.68, 0.36]);
 
   return (
     <main className="page-shell">
       <Navigation page="bracket" />
 
-      <section className="page-hero">
-        <motion.div initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+      <div ref={trophyFlowRef} className="bracket-trophy-flow">
+        {!mobile && (
+          <motion.aside
+            className="bracket-scroll-trophy"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            style={{ x: trophyX, y: trophyY, scale: trophyScale }}
+            transition={{ duration: 0.65, delay: 0.15 }}
+          >
+            <TrophyScene className="page-hero-trophy-scene" />
+          </motion.aside>
+        )}
+
+      <section className="page-hero bracket-page-hero">
+        <motion.div className="bracket-page-hero-copy" initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <span className="live-chip">Mata-mata</span>
           <h1>Chaveamento da Copa 2026</h1>
           <p>
@@ -404,6 +425,7 @@ export function BracketPage() {
         />
         {mobile ? <MobileBracketFlow /> : <VisualBracket />}
       </section>
+      </div>
 
       <section className="section-block">
         <SectionHeader
