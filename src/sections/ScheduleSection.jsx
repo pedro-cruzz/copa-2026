@@ -1,9 +1,18 @@
-import { useMemo } from "react";
-import { RotateCcw, Search } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { AlertTriangle, RotateCcw, Search } from "lucide-react";
 import { getMatchStatus, StatusBadge } from "../components/StatusBadge";
 import { SectionHeader } from "../components/SectionHeader";
 import { TeamName } from "../components/TeamFlag";
 import { getTeams, groupByDay, isBrazilMatch, matches, normalizeText } from "../data/tournament";
+import {
+  getOpenLigaFixtureState,
+  getOpenLigaScore,
+  getOpenLigaWorldCupScoreboard,
+  isOpenLigaMatchInPlay,
+  openLigaFixtureForLocalMatch
+} from "../services/openligadb";
+
+const SCOREBOARD_POLL_INTERVAL_MS = 20000;
 
 function getNextMatch() {
   const now = new Date();
@@ -14,6 +23,8 @@ export function ScheduleSection({ filters, setFilters }) {
   const teams = useMemo(() => getTeams(), []);
   const groups = useMemo(() => [...new Set(matches.map((match) => match.group))].sort(), []);
   const nextMatch = useMemo(() => getNextMatch(), []);
+  const [scoreboard, setScoreboard] = useState([]);
+  const [scoreboardError, setScoreboardError] = useState("");
 
   const filteredMatches = useMemo(() => {
     const search = normalizeText(filters.search.trim());
@@ -33,6 +44,32 @@ export function ScheduleSection({ filters, setFilters }) {
   const clearFilters = () => {
     setFilters({ search: "", group: "all", team: "all" });
   };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadScoreboard = async () => {
+      try {
+        const data = await getOpenLigaWorldCupScoreboard();
+        if (!cancelled) {
+          setScoreboard(data);
+          setScoreboardError("");
+        }
+      } catch (event) {
+        if (!cancelled) {
+          setScoreboardError(event.message);
+        }
+      }
+    };
+
+    loadScoreboard();
+    const intervalId = window.setInterval(loadScoreboard, SCOREBOARD_POLL_INTERVAL_MS);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+    };
+  }, []);
 
   return (
     <section id="schedule" className="section-block">
@@ -86,6 +123,13 @@ export function ScheduleSection({ filters, setFilters }) {
         </button>
       </div>
 
+      {scoreboardError && (
+        <article className="inline-error">
+          <AlertTriangle size={16} />
+          <span>Placar ao vivo indisponivel: {scoreboardError}</span>
+        </article>
+      )}
+
       <div className="schedule-list">
         {filteredMatches.length === 0 ? (
           <div className="empty-state">Nenhum jogo encontrado com esses filtros.</div>
@@ -101,16 +145,25 @@ export function ScheduleSection({ filters, setFilters }) {
               </header>
               <div>
                 {dayMatches.map((match) => {
-                  const status = getMatchStatus(match, nextMatch);
+                  const liveFixture = openLigaFixtureForLocalMatch(scoreboard, match);
+                  const liveScore = liveFixture ? getOpenLigaScore(liveFixture) : null;
+                  const status = liveFixture && isOpenLigaMatchInPlay(liveFixture)
+                    ? { label: getOpenLigaFixtureState(liveFixture), tone: "live" }
+                    : getMatchStatus(match, nextMatch);
+
                   return (
                     <article
                       key={`${match.date}-${match.time}-${match.home}`}
-                      className={`match-card ${isBrazilMatch(match) ? "brazil-match" : ""}`}
+                      className={`match-card ${liveScore ? "match-card-live-score" : ""} ${isBrazilMatch(match) ? "brazil-match" : ""}`}
                     >
                       <strong className="match-time">{match.time}</strong>
                       <StatusBadge status={status} />
                       <p>
-                        <TeamName team={match.home} /> <span className="versus">x</span> <TeamName team={match.away} />
+                        <TeamName team={match.home} />
+                        <span className={liveScore ? "live-score-pill" : "versus"}>
+                          {liveScore ? `${liveScore.homeScore} x ${liveScore.awayScore}` : "x"}
+                        </span>
+                        <TeamName team={match.away} />
                       </p>
                     </article>
                   );

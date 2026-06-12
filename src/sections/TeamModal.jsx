@@ -1,90 +1,145 @@
-import { AnimatePresence, motion } from "framer-motion";
+// src/sections/TeamModal.jsx
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { getTeamCuriosities, getTeamGroup, getTeamMatches, isBrazilMatch } from "../data/tournament";
-import { TeamName } from "../components/TeamFlag";
+import { normalizeOpenLigaTeam, getOpenLigaWorldCupScoreboard, getOpenLigaFixtureTeams } from "../services/openligadb";
 
-export function TeamModal({ team, onClose, onFilterTeam }) {
-  const teamMatches = team ? getTeamMatches(team) : [];
-  const group = team ? getTeamGroup(team) : "";
-  const curiosities = team ? getTeamCuriosities(team) : [];
+export function TeamModal({ team, onClose }) {
+  const [activeTab, setActiveTab] = useState("overview");
+  const [teamMatches, setTeamMatches] = useState([]);
+
+  useEffect(() => {
+    setActiveTab("overview");
+
+    async function fetchMatches() {
+      if (!team) return;
+      try {
+        const allMatches = await getOpenLigaWorldCupScoreboard();
+        const filtered = allMatches.filter((match) => {
+          const { home, away } = getOpenLigaFixtureTeams(match);
+          const name = team.name.toLowerCase();
+          return normalizeOpenLigaTeam(home) === name || normalizeOpenLigaTeam(away) === name;
+        });
+        setTeamMatches(filtered);
+      } catch (err) {
+        console.error("Erro ao buscar partidas do time:", err);
+        setTeamMatches([]);
+      }
+    }
+
+    fetchMatches();
+  }, [team]);
+
+  if (!team) return null;
+
+  const tabs = [
+    { id: "overview", label: "Resumo" },
+    { id: "matches", label: "Jogos" },
+    { id: "kits", label: "Uniformes" },
+    { id: "history", label: "Histórico" }
+  ];
 
   return (
-    <AnimatePresence>
-      {team && (
-        <motion.div
-          className="team-modal-backdrop"
-          role="presentation"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) onClose();
+    <div
+      className="team-modal-backdrop"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "rgba(0,0,0,0.8)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 1000,
+      }}
+    >
+      <div
+        className="team-modal"
+        style={{
+          background: "#111",
+          padding: "2rem",
+          borderRadius: "8px",
+          width: "90%",
+          maxWidth: "600px",
+          maxHeight: "80vh",
+          overflowY: "auto",
+        }}
+      >
+        <button
+          onClick={onClose}
+          style={{
+            position: "absolute",
+            top: "1rem",
+            right: "1rem",
+            background: "transparent",
+            color: "white",
+            fontSize: "1.5rem",
+            border: "none",
+            cursor: "pointer",
           }}
         >
-          <motion.section
-            className="team-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="team-modal-title"
-            initial={{ opacity: 0, y: 24, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.98 }}
-            transition={{ duration: 0.2 }}
-          >
-            <header className="team-modal-head">
-              <div>
-                <p className="eyebrow">Seleção</p>
-                <h2 id="team-modal-title">
-                  <TeamName team={team} />
-                </h2>
-                <span>
-                  Grupo {group} · {teamMatches.length} jogos cadastrados
-                </span>
-              </div>
-              <button type="button" className="icon-button" onClick={onClose} aria-label="Fechar modal">
-                <X size={20} />
-              </button>
-            </header>
+          <X size={20} />
+        </button>
 
-            <div className="team-modal-grid">
-              <section className="team-modal-section">
-                <h3>Jogos</h3>
-                <div className="modal-match-list">
-                  {teamMatches.map((match) => (
-                    <article key={`${match.date}-${match.time}-${match.home}`} className={`modal-match-card ${isBrazilMatch(match) ? "brazil-match" : ""}`}>
-                      <strong>{match.day}</strong>
-                      <span>
-                        {match.time} · Grupo {match.group}
-                      </span>
-                      <p>
-                        <TeamName team={match.home} /> <span className="versus">x</span> <TeamName team={match.away} />
-                      </p>
-                    </article>
-                  ))}
-                </div>
-              </section>
+        <header style={{ textAlign: "center", marginBottom: "1rem" }}>
+          <h2>{team.name}</h2>
+        </header>
 
-              <section className="team-modal-section">
-                <h3>Curiosidades</h3>
-                <ul className="curiosity-list">
-                  {curiosities.map((fact) => (
-                    <li key={fact}>{fact}</li>
-                  ))}
-                </ul>
-              </section>
+        <nav style={{ display: "flex", justifyContent: "space-around", marginBottom: "1rem" }}>
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                padding: "0.5rem 1rem",
+                background: activeTab === tab.id ? "#444" : "#222",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+
+        <section>
+          {activeTab === "overview" && (
+            <div>
+              <p><strong>Nome:</strong> {team.name}</p>
+              <p><strong>Grupo:</strong> {team.group || "-"}</p>
+              <p><strong>País:</strong> {team.country || "-"}</p>
             </div>
+          )}
 
-            <footer className="team-modal-actions">
-              <button type="button" className="secondary-action" onClick={onClose}>
-                Fechar
-              </button>
-              <button type="button" className="primary-action" onClick={() => onFilterTeam(team)}>
-                Ver na agenda
-              </button>
-            </footer>
-          </motion.section>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          {activeTab === "matches" && (
+            <ul>
+              {teamMatches.length === 0 ? (
+                <li>Sem partidas encontradas.</li>
+              ) : (
+                teamMatches.map((match) => {
+                  const { home, away } = getOpenLigaFixtureTeams(match);
+                  return (
+                    <li key={match.matchID}>
+                      {home.name} x {away.name} — {new Date(match.matchDateTimeUTC || match.matchDateTime).toLocaleString()}
+                    </li>
+                  );
+                })
+              )}
+            </ul>
+          )}
+
+          {activeTab === "kits" && (
+            <p>Uniformes ainda não configurados.</p>
+          )}
+
+          {activeTab === "history" && (
+            <p>Histórico de curiosidades ou partidas antigas pode ser colocado aqui.</p>
+          )}
+        </section>
+      </div>
+    </div>
   );
 }

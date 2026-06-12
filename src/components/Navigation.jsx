@@ -1,4 +1,4 @@
-import { Activity, CalendarDays, Download, GitBranch, Home, Trophy } from "lucide-react";
+import { Activity, CalendarDays, Download, GitBranch, Home, Shield, Trophy } from "lucide-react";
 import { useInstallPrompt } from "../hooks/useInstallPrompt";
 
 export function Navigation({ page }) {
@@ -22,6 +22,9 @@ export function Navigation({ page }) {
             Grupos
           </a>
           <a href="/#live-center">Ao vivo</a>
+          <a href="/selecoes" className={page === "teams" ? "active" : ""}>
+            Selecoes
+          </a>
           <a href="/chaveamento.html" className={page === "bracket" ? "active" : ""}>
             Chaveamento
           </a>
@@ -47,6 +50,10 @@ export function Navigation({ page }) {
         <a href="/#live-center">
           <Activity size={20} />
           <span>Ao vivo</span>
+        </a>
+        <a href="/selecoes" className={page === "teams" ? "active" : ""}>
+          <Shield size={20} />
+          <span>Times</span>
         </a>
         <a href="/#schedule">
           <CalendarDays size={20} />

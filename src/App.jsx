@@ -9,8 +9,11 @@ import { LiveCenterSection } from "./sections/LiveCenterSection";
 import { ScheduleSection } from "./sections/ScheduleSection";
 import { SummaryCards } from "./sections/SummaryCards";
 import { TeamModal } from "./sections/TeamModal";
+import { TeamsPage } from "./TeamsPage"; // nova página de seleções
 
-const BracketPage = lazy(() => import("./sections/BracketPage").then((module) => ({ default: module.BracketPage })));
+const BracketPage = lazy(() => 
+  import("./sections/BracketPage").then((module) => ({ default: module.BracketPage }))
+);
 
 function UpdateToast() {
   const {
@@ -22,16 +25,13 @@ function UpdateToast() {
     }
   });
 
-  if (!needRefresh) {
-    return null;
-  }
+  if (!needRefresh) return null;
 
   return (
     <div className="update-toast" role="status">
       <span>Nova versão disponível.</span>
       <button type="button" onClick={() => updateServiceWorker(true)}>
-        <RefreshCw size={16} />
-        Atualizar
+        <RefreshCw size={16} /> Atualizar
       </button>
       <button type="button" onClick={() => setNeedRefresh(false)} aria-label="Fechar aviso">
         Depois
@@ -40,7 +40,7 @@ function UpdateToast() {
   );
 }
 
-function HomePage() {
+function HomePageWrapper() {
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [filters, setFilters] = useState({ search: "", group: "all", team: "all" });
 
@@ -51,11 +51,8 @@ function HomePage() {
 
   useEffect(() => {
     const onKeyDown = (event) => {
-      if (event.key === "Escape") {
-        setSelectedTeam(null);
-      }
+      if (event.key === "Escape") setSelectedTeam(null);
     };
-
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
@@ -77,13 +74,17 @@ function HomePage() {
       <GroupsSection onSelectTeam={setSelectedTeam} />
       <ScheduleSection filters={filters} setFilters={setFilters} />
       <TeamModal team={selectedTeam} onClose={() => setSelectedTeam(null)} onFilterTeam={filterTeam} />
-      <footer>Dados organizados para visualização. Confira a tabela oficial antes dos jogos, pois horários podem mudar.</footer>
+      <footer>
+        Dados organizados para visualização. Confira a tabela oficial antes dos jogos, pois horários podem mudar.
+      </footer>
     </main>
   );
 }
 
 export default function App() {
-  const isBracketPage = window.location.pathname.toLowerCase().includes("chaveamento");
+  const pathname = window.location.pathname.toLowerCase();
+  const isBracketPage = pathname.includes("chaveamento");
+  const isTeamsPage = pathname.includes("selecoes");
 
   return (
     <>
@@ -92,8 +93,10 @@ export default function App() {
         <Suspense fallback={null}>
           <BracketPage />
         </Suspense>
+      ) : isTeamsPage ? (
+        <TeamsPage />
       ) : (
-        <HomePage />
+        <HomePageWrapper />
       )}
       <UpdateToast />
     </>

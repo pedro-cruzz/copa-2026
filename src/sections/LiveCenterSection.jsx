@@ -5,57 +5,19 @@ import { TeamName } from "../components/TeamFlag";
 import { getTeamKits } from "../data/kits";
 import { getTeams } from "../data/tournament";
 import {
+  asArray,
+  getFixtureMinute,
+  getFixtureScore,
+  getFixtureState,
+  getFixtureTeams,
   getTeamSquadByTeamId,
   getWorldCupLiveScores,
   hasSportmonksToken,
-  sportmonksConfig
+  sportmonksConfig,
+  unwrapRelation
 } from "../services/sportmonks";
 
 const POLL_INTERVAL_MS = 15000;
-
-function unwrapRelation(value) {
-  return value?.data || value || null;
-}
-
-function asArray(value) {
-  const unwrapped = unwrapRelation(value);
-  return Array.isArray(unwrapped) ? unwrapped : [];
-}
-
-function getParticipantByLocation(participants, location, fallbackIndex) {
-  return (
-    participants.find((participant) => {
-      const metaLocation = participant?.meta?.location || participant?.pivot?.location || participant?.location;
-      return metaLocation === location;
-    }) || participants[fallbackIndex]
-  );
-}
-
-function getParticipantScore(scores, participantId) {
-  const scoreRows = asArray(scores).filter((row) => row?.participant_id === participantId);
-  const currentScore =
-    scoreRows.find((row) => row?.description === "CURRENT") ||
-    scoreRows.find((row) => row?.type?.name === "Current") ||
-    scoreRows[scoreRows.length - 1];
-
-  return currentScore?.score?.goals ?? currentScore?.score?.home ?? currentScore?.score ?? "-";
-}
-
-function getFixtureState(fixture) {
-  const state = unwrapRelation(fixture?.state);
-  return state?.short_name || state?.name || fixture?.state_id || fixture?.state || "Status";
-}
-
-function getFixtureMinute(fixture) {
-  const periods = asArray(fixture?.periods);
-  const activePeriod = periods.find((period) => period?.ended === null || period?.ticking);
-
-  if (activePeriod?.minutes) {
-    return `${activePeriod.minutes}'`;
-  }
-
-  return fixture?.time?.minute ? `${fixture.time.minute}'` : "";
-}
 
 function formatLastUpdated(date) {
   if (!date) {
@@ -85,11 +47,10 @@ function EmptySportmonksState() {
 }
 
 function LiveMatchCard({ fixture }) {
-  const participants = asArray(fixture?.participants).filter((participant) => !participant?.placeholder);
-  const home = getParticipantByLocation(participants, "home", 0);
-  const away = getParticipantByLocation(participants, "away", 1);
+  const { home, away } = getFixtureTeams(fixture);
   const events = asArray(fixture?.events).slice(-4).reverse();
   const lineups = asArray(fixture?.lineups);
+  const score = getFixtureScore(fixture);
 
   return (
     <article className="live-match-card">
@@ -107,7 +68,7 @@ function LiveMatchCard({ fixture }) {
           <strong>{home?.name || "Mandante"}</strong>
         </div>
         <span>
-          {getParticipantScore(fixture?.scores, home?.id)} x {getParticipantScore(fixture?.scores, away?.id)}
+          {score.homeScore} x {score.awayScore}
         </span>
         <div>
           {away?.image_path && <img src={away.image_path} alt="" />}
@@ -240,7 +201,7 @@ export function LiveCenterSection() {
   return (
     <section id="live-center" className="section-block live-center-section">
       <SectionHeader
-        eyebrow="Sportmonks"
+
         title="Central ao vivo"
         right={
           <button type="button" className="secondary-action compact-action" onClick={loadLiveMatches} disabled={!canFetch || loadingLive}>
@@ -250,12 +211,7 @@ export function LiveCenterSection() {
         }
       />
 
-      <div className="live-center-status">
-        <span>
-          Liga Copa: {sportmonksConfig.worldCupLeagueId} · Atualizado: {formatLastUpdated(lastUpdated)}
-        </span>
-        {loadingLive && <span>Sincronizando...</span>}
-      </div>
+      
 
       {!canFetch && <EmptySportmonksState />}
       {error && (
@@ -307,11 +263,7 @@ export function LiveCenterSection() {
               </select>
             </label>
 
-            <label>
-              <span>Sportmonks team_id</span>
-              <input value={teamId} inputMode="numeric" placeholder="Ex.: 18583" onChange={(event) => setTeamId(event.target.value)} />
-            </label>
-
+            
             <button type="button" className="primary-action" onClick={loadSquad} disabled={!canFetch || loadingSquad}>
               <Shield size={16} />
               Buscar elenco

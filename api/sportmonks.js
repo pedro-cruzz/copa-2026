@@ -1,4 +1,49 @@
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
 const SPORTMONKS_BASE_URL = "https://api.sportmonks.com/v3/football";
+
+function parseEnvValue(value) {
+  const trimmed = value.trim();
+
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    return trimmed.slice(1, -1);
+  }
+
+  return trimmed;
+}
+
+function loadEnvFile(fileName) {
+  const envPath = resolve(process.cwd(), fileName);
+
+  if (!existsSync(envPath)) {
+    return;
+  }
+
+  const content = readFileSync(envPath, "utf8");
+
+  content.split(/\r?\n/).forEach((line) => {
+    const trimmed = line.trim();
+
+    if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) {
+      return;
+    }
+
+    const separatorIndex = trimmed.indexOf("=");
+    const key = trimmed.slice(0, separatorIndex).trim();
+    const value = parseEnvValue(trimmed.slice(separatorIndex + 1));
+
+    if (key && process.env[key] === undefined) {
+      process.env[key] = value;
+    }
+  });
+}
+
+loadEnvFile(".env.local");
+loadEnvFile(".env");
 
 function getToken() {
   return process.env.SPORTMONKS_API_TOKEN || process.env.VITE_SPORTMONKS_API_TOKEN || "";
