@@ -35,7 +35,7 @@ export function Hero() {
             <Radio size={14} />
             Central ao vivo
           </span>
-          <h1>Copa do mundo 2026</h1>
+          <h1>Copa 2026</h1>
           <p>
             Agenda, grupos, jogos com placares ao vivo e muito mais. Tudo para você acompanhar a jornada rumo ao hexa!
           </p>
