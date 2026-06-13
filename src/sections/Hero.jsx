@@ -35,9 +35,9 @@ export function Hero() {
             <Radio size={14} />
             Central ao vivo
           </span>
-          <h1>Copa 2026 em modo transmissão</h1>
+          <h1>Copa do mundo 2026</h1>
           <p>
-            Agenda interativa, grupos, jogos do Brasil em destaque e chaveamento em uma interface dark neon feita para desktop e app mobile.
+            Agenda, grupos, jogos com placares ao vivo e muito mais. Tudo para você acompanhar a jornada rumo ao hexa!
           </p>
 
           <div className="hero-actions">
