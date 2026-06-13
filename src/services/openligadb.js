@@ -90,7 +90,7 @@ export function normalizeOpenLigaText(text = "") {
     .trim();
 }
 
-function normalizeOpenLigaTeam(team) {
+export function normalizeOpenLigaTeam(team) {
   const shortAlias = shortNameAliases[team?.shortName];
 
   if (shortAlias) {
@@ -101,25 +101,48 @@ function normalizeOpenLigaTeam(team) {
   return nameAliases[normalizedName] || normalizedName;
 }
 
-function getFinalResult(match) {
-  const results = Array.isArray(match?.matchResults) ? match.matchResults : [];
+export async function getOpenLigaWorldCupScoreboard() {
+  const url = new URL(`/getmatchdata/${openLigaConfig.leagueShortcut}/${openLigaConfig.season}`, openLigaConfig.baseUrl);
+  const response = await fetch(url);
+  const payload = await response.json().catch(() => []);
 
-  return (
-    results.find((result) => result.resultTypeID === 2) ||
-    results.find((result) => /endergebnis/i.test(result.resultName || "")) ||
-    results[results.length - 1] ||
-    null
-  );
+  if (!response.ok) {
+    throw new Error(`Erro OpenLigaDB ${response.status}`);
+  }
+
+  return Array.isArray(payload) ? payload : [];
 }
 
-function getCurrentResultFromGoals(match) {
-  const goals = Array.isArray(match?.goals) ? match.goals : [];
-  return goals[goals.length - 1] || null;
+export function getOpenLigaFixtureTeams(fixture) {
+  return {
+    home: {
+      id: fixture?.team1?.teamId,
+      name: fixture?.team1?.teamName || "Mandante",
+      shortName: fixture?.team1?.shortName,
+      image_path: fixture?.team1?.teamIconUrl
+    },
+    away: {
+      id: fixture?.team2?.teamId,
+      name: fixture?.team2?.teamName || "Visitante",
+      shortName: fixture?.team2?.shortName,
+      image_path: fixture?.team2?.teamIconUrl
+    }
+  };
+}
+
+export function getOpenLigaGoals(fixture) {
+  return Array.isArray(fixture?.goals) ? fixture.goals : [];
 }
 
 export function getOpenLigaScore(match) {
-  const finalResult = getFinalResult(match);
-  const currentGoal = getCurrentResultFromGoals(match);
+  const results = Array.isArray(match?.matchResults) ? match.matchResults : [];
+  const finalResult =
+    results.find((result) => result.resultTypeID === 2) ||
+    results.find((result) => /endergebnis/i.test(result.resultName || "")) ||
+    results[results.length - 1] ||
+    null;
+  const goals = getOpenLigaGoals(match);
+  const currentGoal = goals[goals.length - 1] || null;
 
   return {
     homeScore: finalResult?.pointsTeam1 ?? currentGoal?.scoreTeam1 ?? "-",
@@ -170,37 +193,4 @@ export function openLigaFixtureForLocalMatch(fixtures, match) {
     const invertedMatch = home === awayTarget && away === homeTarget;
     return directMatch || invertedMatch;
   });
-}
-
-export function getOpenLigaFixtureTeams(fixture) {
-  return {
-    home: {
-      id: fixture?.team1?.teamId,
-      name: fixture?.team1?.teamName || "Mandante",
-      shortName: fixture?.team1?.shortName,
-      image_path: fixture?.team1?.teamIconUrl
-    },
-    away: {
-      id: fixture?.team2?.teamId,
-      name: fixture?.team2?.teamName || "Visitante",
-      shortName: fixture?.team2?.shortName,
-      image_path: fixture?.team2?.teamIconUrl
-    }
-  };
-}
-
-export function getOpenLigaGoals(fixture) {
-  return Array.isArray(fixture?.goals) ? fixture.goals : [];
-}
-
-export async function getOpenLigaWorldCupScoreboard() {
-  const url = new URL(`/getmatchdata/${openLigaConfig.leagueShortcut}/${openLigaConfig.season}`, openLigaConfig.baseUrl);
-  const response = await fetch(url);
-  const payload = await response.json().catch(() => []);
-
-  if (!response.ok) {
-    throw new Error(`Erro OpenLigaDB ${response.status}`);
-  }
-
-  return Array.isArray(payload) ? payload : [];
 }

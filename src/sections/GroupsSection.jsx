@@ -1,37 +1,25 @@
-import { groups, getTeamMatches } from "../data/tournament";
 import { SectionHeader } from "../components/SectionHeader";
-import { TeamName } from "../components/TeamFlag";
+import { GroupStandings } from "../components/GroupStandings";
+import { groups as tournamentGroups } from "../data/tournament";
 
-export function GroupsSection({ onSelectTeam }) {
+export function GroupsSection({ teams, onSelectTeam }) {
   return (
     <section id="groups" className="section-block">
       <SectionHeader
         eyebrow="Grupos"
-        title="Seleções por grupo"
-        description="Clique em uma seleção para abrir jogos, adversários e curiosidades."
+        title="Classificação por Grupo"
+        description="Visualize a pontuação, estatísticas e classificação de cada grupo da fase preliminar."
       />
 
-      <div className="groups-grid">
-        {Object.entries(groups).map(([group, teams]) => (
-          <article
-            className="group-card"
-            key={group}
-          >
-            <div className="group-head">
-              <h3>Grupo {group}</h3>
-              <span>4 seleções</span>
+      <div className="groups-standings-grid">
+        {Object.keys(tournamentGroups).map((groupName) => (
+          <article className="group-standings-card" key={groupName}>
+            <div className="group-standings-head">
+              <h3>Grupo {groupName}</h3>
+              <span className="group-match-count">{tournamentGroups[groupName].length} seleções</span>
             </div>
-            <div className="team-list">
-              {teams.map((team) => (
-                <button key={team} type="button" className="team-pill" onClick={() => onSelectTeam(team)} aria-haspopup="dialog">
-                  <span className="team-card-main">
-                    <TeamName team={team} />
-                  </span>
-                  <span className="team-card-meta">
-                    Grupo {group} · {getTeamMatches(team).length} jogos
-                  </span>
-                </button>
-              ))}
+            <div className="group-standings-content">
+              <GroupStandings groupName={groupName} />
             </div>
           </article>
         ))}

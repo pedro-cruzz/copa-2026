@@ -1,19 +1,53 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { Component, lazy, Suspense, useEffect, useState } from "react";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { RefreshCw } from "lucide-react";
 import { BackgroundFX } from "./components/BackgroundFX";
 import { Navigation } from "./components/Navigation";
 import { GroupsSection } from "./sections/GroupsSection";
 import { Hero } from "./sections/Hero";
-import { LiveCenterSection } from "./sections/LiveCenterSection";
 import { ScheduleSection } from "./sections/ScheduleSection";
 import { SummaryCards } from "./sections/SummaryCards";
 import { TeamModal } from "./sections/TeamModal";
+// import { TodayMatchesSection } from "./sections/TodayMatchesSection";
 import { TeamsPage } from "./TeamsPage"; // nova página de seleções
 
 const BracketPage = lazy(() => 
   import("./sections/BracketPage").then((module) => ({ default: module.BracketPage }))
 );
+
+class AppErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+
+  componentDidCatch(error) {
+    console.error(error);
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <main className="page-shell">
+          <section className="app-error-panel">
+            <span className="live-chip">Erro no app</span>
+            <h1>O site nao conseguiu renderizar.</h1>
+            <p>{this.state.error.message || "Erro desconhecido."}</p>
+            <button type="button" className="primary-action" onClick={() => window.location.reload()}>
+              Recarregar
+            </button>
+          </section>
+        </main>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 function UpdateToast() {
   const {
@@ -70,7 +104,7 @@ function HomePageWrapper() {
       <Navigation page="home" />
       <Hero />
       <SummaryCards />
-      <LiveCenterSection />
+      {/* <TodayMatchesSection /> */}
       <GroupsSection onSelectTeam={setSelectedTeam} />
       <ScheduleSection filters={filters} setFilters={setFilters} />
       <TeamModal team={selectedTeam} onClose={() => setSelectedTeam(null)} onFilterTeam={filterTeam} />
@@ -89,16 +123,18 @@ export default function App() {
   return (
     <>
       <BackgroundFX />
-      {isBracketPage ? (
-        <Suspense fallback={null}>
-          <BracketPage />
-        </Suspense>
-      ) : isTeamsPage ? (
-        <TeamsPage />
-      ) : (
-        <HomePageWrapper />
-      )}
-      <UpdateToast />
+      <AppErrorBoundary>
+        {isBracketPage ? (
+          <Suspense fallback={null}>
+            <BracketPage />
+          </Suspense>
+        ) : isTeamsPage ? (
+          <TeamsPage />
+        ) : (
+          <HomePageWrapper />
+        )}
+        <UpdateToast />
+      </AppErrorBoundary>
     </>
   );
 }

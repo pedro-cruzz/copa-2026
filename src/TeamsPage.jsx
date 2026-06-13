@@ -4,7 +4,7 @@ import { Users, AlertTriangle, Search } from "lucide-react";
 import { Navigation } from "./components/Navigation";
 import { SectionHeader } from "./components/SectionHeader";
 import { TeamCard } from "./components/Teamcard";
-import { normalizeOpenLigaTeam, getOpenLigaWorldCupScoreboard, getOpenLigaFixtureTeams } from "../services/openligadb";
+import { normalizeOpenLigaTeam, getOpenLigaWorldCupScoreboard, getOpenLigaFixtureTeams } from "./services/openligadb";
 
 // Modal simplificado
 function TeamDetailsModal({ team, onClose, matches }) {

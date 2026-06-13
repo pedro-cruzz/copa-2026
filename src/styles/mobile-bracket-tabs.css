@@ -1,0 +1,231 @@
+/* Mobile Bracket Tabs */
+
+.mobile-bracket-flow-tabs {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Tabs Container */
+.bracket-tabs-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.bracket-tabs-container::-webkit-scrollbar {
+  display: none;
+}
+
+.bracket-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px;
+  min-width: min-content;
+  flex-shrink: 0;
+}
+
+/* Tab Button */
+.bracket-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.bracket-tab:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Active Tab */
+.bracket-tab.is-active {
+  background: linear-gradient(135deg, #e91e63, #c2185b);
+  color: #ffffff;
+  border-color: #e91e63;
+  box-shadow: 0 4px 16px rgba(233, 30, 99, 0.3);
+}
+
+/* Content Area */
+.bracket-tabs-content {
+  animation: fadeIn 0.3s ease;
+  padding: 0 4px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Round Content */
+.bracket-round-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bracket-round-header {
+  padding: 0;
+}
+
+.bracket-round-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Mobile Bracket Matches */
+.mobile-bracket-matches {
+  display: grid;
+  gap: 8px;
+}
+
+.mobile-bracket-match {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  transition: all 0.2s ease;
+}
+
+.mobile-bracket-match:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.mobile-bracket-match span {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mobile-bracket-match strong {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Final */
+.mobile-bracket-final-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.mobile-bracket-final-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 2px solid rgba(233, 30, 99, 0.3);
+  border-radius: 8px;
+  background: rgba(233, 30, 99, 0.08);
+  transition: all 0.2s ease;
+}
+
+.mobile-bracket-final-card:hover {
+  border-color: rgba(233, 30, 99, 0.6);
+  background: rgba(233, 30, 99, 0.12);
+}
+
+.mobile-bracket-final-card span {
+  font-size: 10px;
+  color: rgba(233, 30, 99, 0.8);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mobile-bracket-final-card strong {
+  font-size: 13px;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.bracket-final-trophy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  margin-top: 8px;
+  border: 2px dashed rgba(233, 30, 99, 0.4);
+  border-radius: 8px;
+  background: rgba(233, 30, 99, 0.1);
+  text-align: center;
+}
+
+.bracket-final-trophy svg {
+  color: #e91e63;
+  filter: drop-shadow(0 0 8px rgba(233, 30, 99, 0.4));
+}
+
+.bracket-final-trophy strong {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .bracket-tabs {
+    gap: 6px;
+    padding: 0 12px;
+  }
+
+  .bracket-tab {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+
+  .bracket-round-header h3 {
+    font-size: 0.95rem;
+  }
+
+  .mobile-bracket-match strong {
+    font-size: 12px;
+  }
+
+  .mobile-bracket-final-card strong {
+    font-size: 12px;
+  }
+
+  .bracket-final-trophy svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .bracket-final-trophy strong {
+    font-size: 11px;
+  }
+}

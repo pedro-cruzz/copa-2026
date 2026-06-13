@@ -7,7 +7,9 @@ import { bracket } from "../data/tournament";
 import { Navigation } from "../components/Navigation";
 import { SectionHeader } from "../components/SectionHeader";
 import { TrophyModel } from "../components/3d/TrophyModel";
+import { MobileBracketWithTabs } from "../components/MobileBracketTabs";
 import { useMediaQuery } from "../hooks/useMediaQuery";
+import "../styles/mobile-bracket-tabs.css";
 
 const BRACKET_SLOT_ROWS = {
   "32": [1, 3, 5, 7, 9, 11, 13, 15],
@@ -324,52 +326,6 @@ function compactMatchLabel(match) {
     .replace(/ x /g, " × ");
 }
 
-function MobileBracketFlow() {
-  const mobileRounds = [
-    { title: "32 avos", matches: bracket[0].matches, firstGameNumber: 73, compact: true },
-    { title: "Oitavas", matches: bracket[1].matches, firstGameNumber: 89 },
-    { title: "Quartas", matches: bracket[2].matches, firstGameNumber: 97 },
-    { title: "Semi", matches: bracket[3].matches.slice(0, 2), firstGameNumber: 101 }
-  ];
-  const finalMatches = bracket[3].matches.slice(2);
-
-  return (
-    <div className="mobile-bracket-flow" aria-label="Chaveamento vertical">
-      <div className="mobile-bracket-board">
-        <h3>Chaveamento</h3>
-
-        {mobileRounds.map((round) => (
-          <section className={`mobile-bracket-round ${round.compact ? "mobile-bracket-round-compact" : ""}`} key={round.title}>
-            <p>{round.title}</p>
-            <div className="mobile-bracket-matches">
-              {round.matches.map((match, index) => (
-                <article className="mobile-bracket-match" key={match} aria-label={match}>
-                  <span>Jogo {round.firstGameNumber + index}</span>
-                  <strong>{compactMatchLabel(match)}</strong>
-                </article>
-              ))}
-            </div>
-          </section>
-        ))}
-
-        <section className="mobile-bracket-final" aria-label="Final">
-          <span>Decisão</span>
-          <div className="mobile-bracket-final-grid">
-            {finalMatches.map((match, index) => (
-              <article className="mobile-bracket-final-card" key={match}>
-                <span>Jogo {103 + index}</span>
-                <strong>{match}</strong>
-              </article>
-            ))}
-          </div>
-          <Trophy size={22} />
-          <strong>Campeão da Copa 2026</strong>
-        </section>
-      </div>
-    </div>
-  );
-}
-
 export function BracketPage() {
   const mobile = useMediaQuery("(max-width: 720px)");
   const trophyFlowRef = useRef(null);
@@ -423,7 +379,7 @@ export function BracketPage() {
           title="Caminho do mata-mata"
           description="O funil começa nas oitavas, passa por quartas e semifinais, e fecha no campeão no centro."
         />
-        {mobile ? <MobileBracketFlow /> : <VisualBracket />}
+        {mobile ? <MobileBracketWithTabs bracket={bracket} /> : <VisualBracket />}
       </section>
       </div>
 

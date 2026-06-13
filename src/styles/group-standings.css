@@ -1,0 +1,272 @@
+/* Group Standings Table */
+
+.group-standings {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+.standings-table thead {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.standings-table th {
+  padding: 12px 8px;
+  text-align: center;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.standings-table th:first-child,
+.standings-table th:nth-child(2) {
+  text-align: left;
+}
+
+.standings-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+}
+
+.standings-table tbody tr:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.standings-table tbody tr.position-1 {
+  background: linear-gradient(90deg, rgba(34, 197, 94, 0.15), transparent);
+}
+
+.standings-table tbody tr.position-2 {
+  background: linear-gradient(90deg, rgba(34, 197, 94, 0.08), transparent);
+}
+
+.standings-table td {
+  padding: 10px 8px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Team Column */
+.col-team {
+  text-align: left;
+}
+
+.team-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.team-cell img {
+  width: 24px;
+  height: 18px;
+  border-radius: 2px;
+  object-fit: cover;
+}
+
+.team-name {
+  font-weight: 500;
+}
+
+/* Position Badge */
+.position-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.5), rgba(139, 92, 246, 0.5));
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.position-1 .position-badge {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1f2937;
+}
+
+.position-2 .position-badge {
+  background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+  color: #1f2937;
+}
+
+.position-3 .position-badge {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
+}
+
+/* Points Badge */
+.points-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
+  font-weight: 700;
+  font-size: 16px;
+  color: #60a5fa;
+}
+
+/* Stat Columns */
+.col-stat {
+  font-weight: 500;
+}
+
+.col-stat .positive {
+  color: #34d399;
+}
+
+.col-stat .negative {
+  color: #f87171;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .standings-table {
+    font-size: 11px;
+  }
+
+  .standings-table th,
+  .standings-table td {
+    padding: 6px 3px;
+  }
+
+  .team-cell {
+    gap: 4px;
+  }
+
+  .team-cell img {
+    width: 18px;
+    height: 13px;
+  }
+
+  .team-name {
+    font-size: 12px;
+  }
+
+  .position-badge {
+    width: 22px;
+    height: 22px;
+    font-size: 9px;
+  }
+
+  .points-badge {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  /* Ocultar colunas menos essenciais (V, E, D) */
+  .col-stat:nth-child(4),
+  .col-stat:nth-child(5),
+  .col-stat:nth-child(6) {
+    display: none;
+  }
+
+  thead th:nth-child(4),
+  thead th:nth-child(5),
+  thead th:nth-child(6) {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .standings-table {
+    font-size: 10px;
+  }
+
+  .standings-table th,
+  .standings-table td {
+    padding: 4px 2px;
+  }
+
+  .team-cell {
+    gap: 3px;
+  }
+
+  .team-cell img {
+    width: 16px;
+    height: 12px;
+  }
+
+  .team-name {
+    font-size: 11px;
+  }
+
+  .position-badge {
+    width: 20px;
+    height: 20px;
+    font-size: 8px;
+  }
+
+  .points-badge {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  .col-position,
+  .col-stat {
+    padding: 3px 1px;
+  }
+}
+
+/* Legend */
+.standings-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.standings-legend span {
+  display: flex;
+  gap: 4px;
+}
+
+.standings-legend strong {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .standings-legend {
+    gap: 10px;
+    font-size: 10px;
+    padding: 10px;
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .standings-legend {
+    gap: 6px;
+    font-size: 8px;
+    padding: 8px;
+    margin-top: 8px;
+  }
+
+  .standings-legend span {
+    font-size: 8px;
+  }
+}
