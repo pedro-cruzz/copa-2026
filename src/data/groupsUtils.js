@@ -1,10 +1,11 @@
-import { matches, groups, getTeamGroup } from "./tournament";
-import { matchResults, getMatchResult } from "./matchResults";
+import { matches, groups } from "./tournament";
+import { getMatchResult } from "./matchResults";
+import { getOpenLigaScore, openLigaFixtureForLocalMatch } from "../services/openligadb";
 
 /**
  * Calcula as estatísticas de um time com base nos seus resultados
  */
-export function calculateTeamStats(teamName) {
+export function calculateTeamStats(teamName, apiMatches = []) {
   const teamMatches = matches.filter(m => m.home === teamName || m.away === teamName);
   
   let stats = {
@@ -20,7 +21,11 @@ export function calculateTeamStats(teamName) {
   };
 
   teamMatches.forEach((match) => {
-    const result = getMatchResult(matches.indexOf(match));
+    const apiFixture = apiMatches.length > 0 ? openLigaFixtureForLocalMatch(apiMatches, match) : null;
+    const apiScore = apiFixture ? getOpenLigaScore(apiFixture) : null;
+    const result = apiScore?.isValid
+      ? { homeScore: apiScore.homeScore, awayScore: apiScore.awayScore }
+      : getMatchResult(matches.indexOf(match));
     
     if (!result) {
       // Jogo ainda não tem resultado
@@ -54,11 +59,11 @@ export function calculateTeamStats(teamName) {
 /**
  * Calcula o standings (classificação) de um grupo
  */
-export function calculateGroupStandings(groupName) {
+export function calculateGroupStandings(groupName, apiMatches = []) {
   const groupTeams = groups[groupName] || [];
   
   const standings = groupTeams
-    .map(teamName => calculateTeamStats(teamName))
+    .map(teamName => calculateTeamStats(teamName, apiMatches))
     .sort((a, b) => {
       // Ordena por: pontos (desc) -> saldo de gols (desc) -> gols a favor (desc)
       if (b.points !== a.points) return b.points - a.points;

@@ -108,7 +108,9 @@ export function TeamModal({ team, onClose }) {
                       </header>
                       <p>
                         {home.name}
-                        <span className="live-score-pill">{score.homeScore} x {score.awayScore}</span>
+                        <span className={score ? "live-score-pill" : "versus"}>
+                          {score ? `${score.homeScore} x ${score.awayScore}` : "x"}
+                        </span>
                         {away.name}
                       </p>
                     </article>

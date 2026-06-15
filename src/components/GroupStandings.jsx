@@ -3,8 +3,8 @@ import { TeamFlag } from "./TeamFlag";
 import { calculateGroupStandings, formatStandingsForDisplay } from "../data/groupsUtils";
 import "../styles/group-standings.css";
 
-export function GroupStandings({ groupName }) {
-  const standings = calculateGroupStandings(groupName);
+export function GroupStandings({ groupName, apiMatches = [] }) {
+  const standings = calculateGroupStandings(groupName, apiMatches);
   const formattedStandings = formatStandingsForDisplay(standings);
 
   return (

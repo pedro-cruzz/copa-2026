@@ -136,10 +136,6 @@ export function getOpenLigaGoals(fixture) {
 
 export function getOpenLigaScore(match) {
   // Se o jogo não terminou e não está rolando, não deveríamos inventar placar
-  if (!match?.matchIsFinished && !isOpenLigaMatchInPlay(match)) {
-    return { homeScore: 0, awayScore: 0, isValid: false }; 
-  }
-
   const results = Array.isArray(match?.matchResults) ? match.matchResults : [];
   
   // Procurar estritamente pelo resultado final (ID 2)
@@ -151,12 +147,18 @@ export function getOpenLigaScore(match) {
   }
 
   // Se o jogo está Ao Vivo, pegamos o resultado atual (geralmente ID 1 ou o último disponível)
-  if (!finalResult && isOpenLigaMatchInPlay(match)) {
+  const inPlay = isOpenLigaMatchInPlay(match);
+
+  if (!finalResult && inPlay) {
     finalResult = results[results.length - 1]; 
   }
 
   const goals = getOpenLigaGoals(match);
   const currentGoal = goals[goals.length - 1] || null;
+
+  if (!match?.matchIsFinished && !inPlay && !finalResult && !currentGoal) {
+    return null;
+  }
 
   return {
     homeScore: finalResult?.pointsTeam1 ?? currentGoal?.scoreTeam1 ?? 0,

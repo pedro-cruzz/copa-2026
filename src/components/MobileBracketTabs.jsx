@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Trophy } from "lucide-react";
+import { TrophyScene } from "./3d/TrophyScene";
 
 function compactMatchLabel(match) {
   return match
@@ -7,7 +7,7 @@ function compactMatchLabel(match) {
     .replace(/Vencedor Oitavas (\d+)/g, "O$1")
     .replace(/Vencedor Quartas (\d+)/g, "Q$1")
     .replace(/Grupo /g, "")
-    .replace(/ x /g, " × ");
+    .replace(/ x /g, " x ");
 }
 
 function BracketRound({ round, matches }) {
@@ -82,7 +82,7 @@ export function MobileBracketWithTabs({ bracket }) {
               ))}
             </div>
             <div className="bracket-final-trophy">
-              <Trophy size={28} />
+              <TrophyScene className="mobile-final-trophy-scene" />
               <strong>Campeão da Copa 2026</strong>
             </div>
           </div>

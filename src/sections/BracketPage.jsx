@@ -1,13 +1,10 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowLeft, Trophy } from "lucide-react";
-import { Suspense, useRef } from "react";
-import { Canvas } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
 import { bracket } from "../data/tournament";
 import { AppFooter } from "../components/AppFooter";
 import { Navigation } from "../components/Navigation";
 import { SectionHeader } from "../components/SectionHeader";
-import { TrophyModel } from "../components/3d/TrophyModel";
+import { TrophyScene } from "../components/3d/TrophyScene";
 import { MobileBracketWithTabs } from "../components/MobileBracketTabs";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import "../styles/mobile-bracket-tabs.css";
@@ -145,23 +142,6 @@ function DesktopBracketSide({ side }) {
       {orderedRounds.map((round) => (
         <DesktopBracketColumn key={round.key} side={side} {...round} />
       ))}
-    </div>
-  );
-}
-
-function TrophyScene({ className = "desktop-trophy-scene" }) {
-  return (
-    <div className={className} aria-hidden="true">
-      <Canvas dpr={[1, 1.5]} frameloop="demand" gl={{ antialias: true, alpha: true }} camera={{ position: [0, 0.18, 4.8], fov: 31 }}>
-        <ambientLight intensity={1.3} />
-        <directionalLight position={[2.8, 4.2, 3.4]} intensity={2.8} color="#fff2c4" />
-        <pointLight position={[-2.2, 1.4, 2.4]} intensity={1.45} color="#35d98b" />
-        <spotLight position={[0, 4, 2.6]} angle={0.46} penumbra={0.7} intensity={2.15} color="#fff9dc" />
-        <Suspense fallback={null}>
-          <Environment preset="city" resolution={32} />
-          <TrophyModel />
-        </Suspense>
-      </Canvas>
     </div>
   );
 }
@@ -310,7 +290,7 @@ function VisualBracket() {
           <span>Jogo 104</span>
         </article>
         <article className="desktop-center-card desktop-center-card-bronze">
-          <strong>3Âº lugar</strong>
+          <strong>3º lugar</strong>
           <span>Jogo 103</span>
         </article>
       </div>
@@ -324,7 +304,7 @@ function compactMatchLabel(match) {
     .replace(/Vencedor Oitavas (\d+)/g, "O$1")
     .replace(/Vencedor Quartas (\d+)/g, "Q$1")
     .replace(/Grupo /g, "")
-    .replace(/ x /g, " × ");
+    .replace(/ x /g, " x ");
 }
 
 export function BracketPage() {
@@ -332,56 +312,58 @@ export function BracketPage() {
   const trophyFlowRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: trophyFlowRef,
-    offset: ["start 10%", "end 42%"]
+    offset: ["start start", "end 58%"]
   });
-  const trophyX = useTransform(scrollYProgress, [0, 0.45, 1], [0, -245, -445]);
-  const trophyY = useTransform(scrollYProgress, [0, 0.45, 1], [96, 460, 900]);
-  const trophyScale = useTransform(scrollYProgress, [0, 0.45, 1], [1, 0.68, 0.36]);
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 88, damping: 26, mass: 0.7 });
+  const trophyX = useTransform(smoothProgress, [0, 1], [0, -124]);
+  const trophyY = useTransform(smoothProgress, [0, 1], [0, 1010]);
+  const trophyScale = useTransform(smoothProgress, [0, 1], [1, 0.42]);
 
   return (
     <main className="page-shell">
       <Navigation page="bracket" />
 
       <div ref={trophyFlowRef} className="bracket-trophy-flow">
-        {!mobile && (
-          <motion.aside
-            className="bracket-scroll-trophy"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            style={{ x: trophyX, y: trophyY, scale: trophyScale }}
-            transition={{ duration: 0.65, delay: 0.15 }}
-          >
-            <TrophyScene className="page-hero-trophy-scene" />
-          </motion.aside>
-        )}
+        <section className="page-hero bracket-page-hero">
+          <motion.div className="bracket-page-hero-copy" initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <span className="live-chip">Mata-mata</span>
+            <div className="bracket-hero-title-row">
+              <h1>Chaveamento da Copa 2026</h1>
+              {!mobile && (
+                <motion.aside
+                  className="bracket-scroll-trophy"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1 }}
+                  style={{ x: trophyX, y: trophyY, scale: trophyScale }}
+                  transition={{ duration: 0.5, delay: 0.05 }}
+                >
+                  <TrophyScene className="bracket-hero-trophy-scene" />
+                </motion.aside>
+              )}
+            </div>
+            <p>
+              Caminho completo do mata-mata com confrontos por posição de classificação. Os nomes reais entram depois que a fase de grupos terminar.
+            </p>
+            <div className="hero-actions">
+              <a href="/#schedule" className="primary-action">
+                <ArrowLeft size={18} />
+                Voltar aos jogos
+              </a>
+              <a href="/" className="secondary-action">
+                Página inicial
+              </a>
+            </div>
+          </motion.div>
+        </section>
 
-      <section className="page-hero bracket-page-hero">
-        <motion.div className="bracket-page-hero-copy" initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <span className="live-chip">Mata-mata</span>
-          <h1>Chaveamento da Copa 2026</h1>
-          <p>
-            Caminho completo do mata-mata com confrontos por posição de classificação. Os nomes reais entram depois que a fase de grupos terminar.
-          </p>
-          <div className="hero-actions">
-            <a href="/#schedule" className="primary-action">
-              <ArrowLeft size={18} />
-              Voltar aos jogos
-            </a>
-            <a href="/" className="secondary-action">
-              Página inicial
-            </a>
-          </div>
-        </motion.div>
-      </section>
-
-      <section id="bracket" className="section-block">
-        <SectionHeader
-          eyebrow="Chaveamento"
-          title="Caminho do mata-mata"
-          description="O funil começa nas oitavas, passa por quartas e semifinais, e fecha no campeão no centro."
-        />
-        {mobile ? <MobileBracketWithTabs bracket={bracket} /> : <VisualBracket />}
-      </section>
+        <section id="bracket" className="section-block bracket-section">
+          <SectionHeader
+            eyebrow="Chaveamento"
+            title="Caminho do mata-mata"
+            description="O funil começa nas oitavas, passa por quartas e semifinais, e fecha no campeão no centro."
+          />
+          {mobile ? <MobileBracketWithTabs bracket={bracket} /> : <VisualBracket />}
+        </section>
       </div>
 
       <section className="section-block">
