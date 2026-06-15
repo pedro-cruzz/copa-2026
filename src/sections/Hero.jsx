@@ -47,8 +47,8 @@ export function Hero() {
             <a href="#groups" className="secondary-action">
               Classificação
             </a>
-            {!installPrompt.installed && (
-              <button type="button" className="secondary-action" onClick={installPrompt.install}>
+            {installPrompt.canInstall && (
+              <button type="button" className="secondary-action install-action" onClick={installPrompt.install}>
                 <Download size={18} />
                 Instalar App
               </button>

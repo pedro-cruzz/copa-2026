@@ -1,6 +1,7 @@
 // src/pages/TeamsPage.jsx
 import { useEffect, useState, useMemo } from "react";
 import { Users, AlertTriangle, Search } from "lucide-react";
+import { AppFooter } from "./components/AppFooter";
 import { Navigation } from "./components/Navigation";
 import { SectionHeader } from "./components/SectionHeader";
 import { TeamCard } from "./components/Teamcard";
@@ -188,9 +189,7 @@ export function TeamsPage() {
         />
       )}
 
-      <footer>
-        Dados fornecidos pela OpenLigaDB.
-      </footer>
+      <AppFooter note="Dados fornecidos pela OpenLigaDB." />
     </main>
   );
 }

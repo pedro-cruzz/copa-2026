@@ -135,18 +135,33 @@ export function getOpenLigaGoals(fixture) {
 }
 
 export function getOpenLigaScore(match) {
+  // Se o jogo não terminou e não está rolando, não deveríamos inventar placar
+  if (!match?.matchIsFinished && !isOpenLigaMatchInPlay(match)) {
+    return { homeScore: 0, awayScore: 0, isValid: false }; 
+  }
+
   const results = Array.isArray(match?.matchResults) ? match.matchResults : [];
-  const finalResult =
-    results.find((result) => result.resultTypeID === 2) ||
-    results.find((result) => /endergebnis/i.test(result.resultName || "")) ||
-    results[results.length - 1] ||
-    null;
+  
+  // Procurar estritamente pelo resultado final (ID 2)
+  let finalResult = results.find((result) => result.resultTypeID === 2);
+  
+  // Se não achou o ID 2 mas o jogo tá encerrado, procura por texto
+  if (!finalResult && match?.matchIsFinished) {
+    finalResult = results.find((result) => /endergebnis/i.test(result.resultName || ""));
+  }
+
+  // Se o jogo está Ao Vivo, pegamos o resultado atual (geralmente ID 1 ou o último disponível)
+  if (!finalResult && isOpenLigaMatchInPlay(match)) {
+    finalResult = results[results.length - 1]; 
+  }
+
   const goals = getOpenLigaGoals(match);
   const currentGoal = goals[goals.length - 1] || null;
 
   return {
-    homeScore: finalResult?.pointsTeam1 ?? currentGoal?.scoreTeam1 ?? "-",
-    awayScore: finalResult?.pointsTeam2 ?? currentGoal?.scoreTeam2 ?? "-"
+    homeScore: finalResult?.pointsTeam1 ?? currentGoal?.scoreTeam1 ?? 0,
+    awayScore: finalResult?.pointsTeam2 ?? currentGoal?.scoreTeam2 ?? 0,
+    isValid: finalResult !== undefined || currentGoal !== null
   };
 }
 

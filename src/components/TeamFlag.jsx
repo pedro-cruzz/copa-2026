@@ -16,26 +16,22 @@ export function TeamFlag({ team, className = "" }) {
     return <span className={`flag-fallback ${className}`} aria-hidden="true" />;
   }
 
-  const isSubdivision = code.startsWith("gb-");
-
   return (
     <span className={`team-flag-wrap ${className}`} aria-hidden="true">
       <span className="flag-fallback">{flagLabel(code)}</span>
-      {!isSubdivision && (
-        <img
-          src={`https://flagcdn.com/w40/${code}.png`}
-          srcSet={`https://flagcdn.com/w80/${code}.png 2x`}
-          alt=""
-          className="team-flag"
-          loading="lazy"
-          onLoad={(event) => {
-            event.currentTarget.previousElementSibling.hidden = true;
-          }}
-          onError={(event) => {
-            event.currentTarget.remove();
-          }}
-        />
-      )}
+      <img
+        src={`https://flagcdn.com/w40/${code}.png`}
+        srcSet={`https://flagcdn.com/w80/${code}.png 2x`}
+        alt=""
+        className="team-flag"
+        loading="lazy"
+        onLoad={(event) => {
+          event.currentTarget.previousElementSibling.hidden = true;
+        }}
+        onError={(event) => {
+          event.currentTarget.remove();
+        }}
+      />
     </span>
   );
 }

@@ -1880,12 +1880,123 @@ select:focus-visible {
   font-weight: 900;
 }
 
-footer {
-  padding: 34px 0 0;
+.app-footer {
+  display: grid;
+  gap: 16px;
+  margin-top: 58px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(0, 255, 136, 0.09), transparent 34%),
+    rgba(5, 12, 14, 0.82);
+  padding: 18px;
   color: #71827d;
   font-size: 0.9rem;
   line-height: 1.6;
-  text-align: center;
+}
+
+.app-footer-main,
+.app-footer-bottom,
+.app-footer-brand,
+.app-footer-links,
+.app-footer-links a {
+  display: flex;
+  align-items: center;
+}
+
+.app-footer-main,
+.app-footer-bottom {
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.app-footer-brand {
+  min-width: 0;
+  gap: 12px;
+}
+
+.app-footer-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 8px;
+  background: rgba(0, 255, 136, 0.14);
+  color: var(--neon);
+}
+
+.app-footer-brand strong {
+  display: block;
+  color: #dff7ec;
+  font-size: 1rem;
+  font-weight: 950;
+}
+
+.app-footer-brand span span {
+  display: block;
+  margin-top: 2px;
+  color: #71827d;
+  font-size: 0.84rem;
+}
+
+.app-footer-links {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.app-footer-links a {
+  min-height: 38px;
+  gap: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #c8d7d2;
+  padding: 0 11px;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.app-footer-links a:hover {
+  border-color: rgba(0, 255, 136, 0.3);
+  background: rgba(0, 255, 136, 0.12);
+  color: var(--neon);
+}
+
+.app-footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 14px;
+  color: #879893;
+  font-size: 0.82rem;
+}
+
+.app-footer-bottom strong {
+  color: #dff7ec;
+}
+
+@media (max-width: 720px) {
+  .app-footer {
+    margin-top: 34px;
+    padding: 14px;
+  }
+
+  .app-footer-main,
+  .app-footer-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .app-footer-links {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: stretch;
+  }
+
+  .app-footer-links a {
+    justify-content: center;
+  }
 }
 
 @media (max-width: 1160px) {
@@ -2695,7 +2806,7 @@ footer {
     margin-top: 18px;
   }
 
-  .hero-actions .secondary-action:last-child {
+  .hero-actions .install-action {
     grid-column: 1 / -1;
   }
 

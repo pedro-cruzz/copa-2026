@@ -1,6 +1,7 @@
 import { Component, lazy, Suspense, useEffect, useState } from "react";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { RefreshCw } from "lucide-react";
+import { AppFooter } from "./components/AppFooter";
 import { BackgroundFX } from "./components/BackgroundFX";
 import { Navigation } from "./components/Navigation";
 import { GroupsSection } from "./sections/GroupsSection";
@@ -108,9 +109,7 @@ function HomePageWrapper() {
       <GroupsSection onSelectTeam={setSelectedTeam} />
       <ScheduleSection filters={filters} setFilters={setFilters} />
       <TeamModal team={selectedTeam} onClose={() => setSelectedTeam(null)} onFilterTeam={filterTeam} />
-      <footer>
-        Dados organizados para visualização. Confira a tabela oficial antes dos jogos, pois horários podem mudar.
-      </footer>
+      <AppFooter note="Dados organizados para visualizacao. Confira a tabela oficial antes dos jogos, pois horarios podem mudar." />
     </main>
   );
 }

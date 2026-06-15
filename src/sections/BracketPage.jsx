@@ -4,6 +4,7 @@ import { Suspense, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import { bracket } from "../data/tournament";
+import { AppFooter } from "../components/AppFooter";
 import { Navigation } from "../components/Navigation";
 import { SectionHeader } from "../components/SectionHeader";
 import { TrophyModel } from "../components/3d/TrophyModel";
@@ -410,7 +411,7 @@ export function BracketPage() {
         </div>
       </section>
 
-      <footer>Dados organizados para visualização. Confira a tabela oficial antes dos jogos, pois horários podem mudar.</footer>
+      <AppFooter note="Dados organizados para visualizacao. Confira a tabela oficial antes dos jogos, pois horarios podem mudar." />
     </main>
   );
 }
