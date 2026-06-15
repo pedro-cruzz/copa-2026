@@ -271,7 +271,6 @@ function VisualBracket() {
 
         <section className="desktop-champion-stage" aria-label="Campeão">
           <p>Road to 2026</p>
-          <div className="desktop-trophy-landing" aria-hidden="true" />
           <h3>Campeão</h3>
           <span>Vencedor da final</span>
           <div className="desktop-decision-grid" hidden>
@@ -309,49 +308,36 @@ function compactMatchLabel(match) {
 
 export function BracketPage() {
   const mobile = useMediaQuery("(max-width: 720px)");
-  const trophyFlowRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: trophyFlowRef,
-    offset: ["start start", "end 58%"]
-  });
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 88, damping: 26, mass: 0.7 });
-  const trophyX = useTransform(smoothProgress, [0, 1], [0, -124]);
-  const trophyY = useTransform(smoothProgress, [0, 1], [0, 1010]);
-  const trophyScale = useTransform(smoothProgress, [0, 1], [1, 0.42]);
 
   return (
     <main className="page-shell">
       <Navigation page="bracket" />
 
-      <div ref={trophyFlowRef} className="bracket-trophy-flow">
+      <div className="bracket-trophy-flow">
         <section className="page-hero bracket-page-hero">
           <motion.div className="bracket-page-hero-copy" initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="live-chip">Mata-mata</span>
             <div className="bracket-hero-title-row">
-              <h1>Chaveamento da Copa 2026</h1>
+              <div className="bracket-hero-text-stack">
+                <h1>Chaveamento da Copa 2026</h1>
+                <p>
+                  Caminho completo do mata-mata com confrontos por posição de classificação. Os nomes reais entram depois que a fase de grupos terminar.
+                </p>
+                <div className="hero-actions">
+                  <a href="/#schedule" className="primary-action">
+                    <ArrowLeft size={18} />
+                    Voltar aos jogos
+                  </a>
+                  <a href="/" className="secondary-action">
+                    Página inicial
+                  </a>
+                </div>
+              </div>
               {!mobile && (
-                <motion.aside
-                  className="bracket-scroll-trophy"
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1 }}
-                  style={{ x: trophyX, y: trophyY, scale: trophyScale }}
-                  transition={{ duration: 0.5, delay: 0.05 }}
-                >
+                <aside className="bracket-scroll-trophy">
                   <TrophyScene className="bracket-hero-trophy-scene" />
-                </motion.aside>
+                </aside>
               )}
-            </div>
-            <p>
-              Caminho completo do mata-mata com confrontos por posição de classificação. Os nomes reais entram depois que a fase de grupos terminar.
-            </p>
-            <div className="hero-actions">
-              <a href="/#schedule" className="primary-action">
-                <ArrowLeft size={18} />
-                Voltar aos jogos
-              </a>
-              <a href="/" className="secondary-action">
-                Página inicial
-              </a>
             </div>
           </motion.div>
         </section>

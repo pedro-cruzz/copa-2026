@@ -1285,23 +1285,17 @@ select:focus-visible {
 
 .bracket-trophy-flow {
   position: relative;
-  z-index: 20;
-  isolation: isolate;
 }
 
 .bracket-scroll-trophy {
   position: relative;
-  top: auto;
-  right: auto;
-  z-index: 60;
   display: flex;
-  width: clamp(198px, 15vw, 270px);
-  height: clamp(260px, 20vw, 350px);
+  width: clamp(260px, 20vw, 360px);
+  height: clamp(340px, 27vw, 470px);
   align-items: center;
   justify-content: center;
+  justify-self: center;
   pointer-events: none;
-  transform-origin: 50% 18%;
-  will-change: transform;
 }
 
 .bracket-page-hero {
@@ -1316,14 +1310,27 @@ select:focus-visible {
   position: relative;
   z-index: 30;
   display: grid;
-  width: min(100%, 980px);
-  grid-template-columns: minmax(0, 690px) minmax(190px, 0.34fr);
-  gap: clamp(24px, 4vw, 58px);
+  width: min(100%, 1080px);
+  grid-template-columns: minmax(0, 660px) minmax(260px, 0.48fr);
+  gap: clamp(34px, 5vw, 78px);
   align-items: center;
+}
+
+.bracket-hero-text-stack {
+  display: grid;
+  align-content: center;
 }
 
 .bracket-hero-title-row h1 {
   margin: 0;
+}
+
+.bracket-hero-text-stack p {
+  margin: 24px 0 0;
+}
+
+.bracket-hero-text-stack .hero-actions {
+  margin-top: 24px;
 }
 
 .bracket-hero-trophy-scene {
@@ -1536,14 +1543,26 @@ select:focus-visible {
 
 .desktop-champion-stage {
   position: absolute;
-  left: calc((565 / 1280) * 100%);
-  top: calc((100 / 760) * 100%);
-  z-index: 0;
+  left: calc((540 / 1280) * 100%);
+  top: calc((118 / 760) * 100%);
+  z-index: 3;
   display: grid;
-  width: calc((150 / 1280) * 100%);
-  min-width: 136px;
+  width: calc((200 / 1280) * 100%);
+  min-width: 178px;
+  min-height: 138px;
   place-items: center;
   align-content: center;
+  gap: 7px;
+  border: 1px solid rgba(246, 204, 95, 0.38);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(246, 204, 95, 0.2), transparent 54%),
+    linear-gradient(180deg, rgba(17, 24, 18, 0.94), rgba(3, 10, 9, 0.9));
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 34px rgba(53, 217, 139, 0.12);
+  padding: 16px 14px;
   text-align: center;
   pointer-events: none;
 }
@@ -1568,9 +1587,10 @@ select:focus-visible {
 }
 
 .desktop-champion-stage p {
-  color: #8ddfaf;
-  font-size: 0.7rem;
+  color: #f6cc5f;
+  font-size: 0.66rem;
   font-weight: 950;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -1580,23 +1600,26 @@ select:focus-visible {
   margin: 0 auto 3px;
 }
 
-.desktop-trophy-landing {
-  width: 132px;
-  height: 150px;
-  margin: 0 auto 10px;
-}
-
 .desktop-champion-stage h3 {
   color: #f4fffb;
-  font-size: 1.18rem;
+  font-size: 1.45rem;
   font-weight: 950;
   line-height: 1.05;
 }
 
 .desktop-champion-stage > span {
-  color: var(--muted);
-  font-size: 0.74rem;
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(53, 217, 139, 0.28);
+  border-radius: 999px;
+  background: rgba(53, 217, 139, 0.1);
+  color: #b8f4ce;
+  font-size: 0.72rem;
+  font-weight: 850;
   line-height: 1.35;
+  padding: 0 10px;
 }
 
 .desktop-center-card {
@@ -2835,6 +2858,24 @@ select:focus-visible {
     margin-top: 18px;
   }
 
+  .bracket-page-hero {
+    min-height: 0;
+    padding-block: 22px 24px;
+  }
+
+  .bracket-hero-title-row {
+    display: block;
+    width: 100%;
+  }
+
+  .bracket-hero-text-stack p {
+    margin-top: 14px;
+  }
+
+  .bracket-hero-text-stack .hero-actions {
+    margin-top: 18px;
+  }
+
   .hero-actions .install-action {
     grid-column: 1 / -1;
   }
@@ -4044,4 +4085,43 @@ select:focus-visible {
   width: 80px;
   height: auto;
   margin-bottom: 0.5rem;
+}
+
+@media (max-width: 720px) {
+  .page-hero.bracket-page-hero {
+    display: block;
+    min-height: 0 !important;
+    height: auto;
+    padding: 16px 10px 18px;
+  }
+
+  .bracket-page-hero .bracket-page-hero-copy {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .bracket-page-hero .live-chip {
+    margin-inline: auto;
+  }
+
+  .bracket-hero-title-row h1,
+  .bracket-hero-text-stack p {
+    text-align: center;
+  }
+
+  .bracket-hero-text-stack p {
+    margin-top: 12px;
+  }
+
+  .bracket-hero-text-stack .hero-actions {
+    width: min(100%, 210px);
+    grid-template-columns: 1fr;
+    margin: 16px auto 0;
+  }
+
+  .bracket-section {
+    margin-top: 16px;
+  }
 }
