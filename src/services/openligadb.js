@@ -80,6 +80,57 @@ const nameAliases = {
   turkei: "turquia"
 };
 
+const displayNameAliases = {
+  argentina: "Argentina",
+  australia: "Austrália",
+  austria: "Áustria",
+  belgica: "Bélgica",
+  "bosnia e herzegovina": "Bósnia e Herzegovina",
+  brasil: "Brasil",
+  "cabo verde": "Cabo Verde",
+  canada: "Canadá",
+  catar: "Catar",
+  colombia: "Colômbia",
+  "coreia do sul": "Coreia do Sul",
+  "costa do marfim": "Costa do Marfim",
+  croacia: "Croácia",
+  curacao: "Curaçao",
+  egito: "Egito",
+  equador: "Equador",
+  escocia: "Escócia",
+  espanha: "Espanha",
+  "estados unidos": "Estados Unidos",
+  franca: "França",
+  gana: "Gana",
+  haiti: "Haiti",
+  holanda: "Holanda",
+  inglaterra: "Inglaterra",
+  ira: "Irã",
+  iraque: "Iraque",
+  japao: "Japão",
+  jordania: "Jordânia",
+  marrocos: "Marrocos",
+  mexico: "México",
+  noruega: "Noruega",
+  "nova zelandia": "Nova Zelândia",
+  panama: "Panamá",
+  paraguai: "Paraguai",
+  portugal: "Portugal",
+  "rd congo": "RD Congo",
+  "republica tcheca": "República Tcheca",
+  senegal: "Senegal",
+  suecia: "Suécia",
+  suica: "Suíça",
+  tunisia: "Tunísia",
+  turquia: "Turquia",
+  uruguai: "Uruguai",
+  uzbequistao: "Uzbequistão",
+  "africa do sul": "África do Sul",
+  alemanha: "Alemanha",
+  argelia: "Argélia",
+  "arabia saudita": "Arábia Saudita"
+};
+
 export function normalizeOpenLigaText(text = "") {
   return String(text)
     .toLowerCase()
@@ -99,6 +150,11 @@ export function normalizeOpenLigaTeam(team) {
 
   const normalizedName = normalizeOpenLigaText(team?.teamName);
   return nameAliases[normalizedName] || normalizedName;
+}
+
+export function getOpenLigaDisplayTeamName(team) {
+  const normalizedTeam = normalizeOpenLigaTeam(team);
+  return displayNameAliases[normalizedTeam] || team?.teamName || team?.name || "Seleção";
 }
 
 export async function getOpenLigaWorldCupScoreboard() {
