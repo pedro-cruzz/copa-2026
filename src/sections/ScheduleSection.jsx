@@ -11,12 +11,17 @@ import {
   isOpenLigaMatchInPlay,
   openLigaFixtureForLocalMatch
 } from "../services/openligadb";
+import { buildMatchHistoryHref } from "../utils/historyRoute";
 
 const SCOREBOARD_POLL_INTERVAL_MS = 20000;
 
 function getNextMatch() {
   const now = new Date();
   return matches.find((match) => new Date(`${match.date}T${match.time}:00-03:00`) >= now) || matches[0];
+}
+
+function getMatchKey(match) {
+  return `${match.date}-${match.time}-${match.home}-${match.away}`;
 }
 
 export function ScheduleSection({ filters, setFilters }) {
@@ -145,6 +150,7 @@ export function ScheduleSection({ filters, setFilters }) {
               </header>
               <div>
                 {dayMatches.map((match) => {
+                  const matchKey = getMatchKey(match);
                   const liveFixture = openLigaFixtureForLocalMatch(scoreboard, match);
                   const liveScore = liveFixture ? getOpenLigaScore(liveFixture) : null;
                   const status = liveFixture && isOpenLigaMatchInPlay(liveFixture)
@@ -153,7 +159,7 @@ export function ScheduleSection({ filters, setFilters }) {
 
                   return (
                     <article
-                      key={`${match.date}-${match.time}-${match.home}`}
+                      key={matchKey}
                       className={`match-card ${liveScore ? "match-card-live-score" : ""} ${isBrazilMatch(match) ? "brazil-match" : ""}`}
                     >
                       <strong className="match-time">{match.time}</strong>
@@ -165,6 +171,12 @@ export function ScheduleSection({ filters, setFilters }) {
                         </span>
                         <TeamName team={match.away} />
                       </p>
+                      <a
+                        href={buildMatchHistoryHref(match)}
+                        className="match-history-toggle"
+                      >
+                        Historico
+                      </a>
                     </article>
                   );
                 })}

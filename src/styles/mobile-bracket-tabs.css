@@ -4,7 +4,8 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  margin-top: 18px;
 }
 
 /* Tabs Container */
@@ -13,6 +14,7 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  padding-bottom: 2px;
 }
 
 .bracket-tabs-container::-webkit-scrollbar {
@@ -21,8 +23,8 @@
 
 .bracket-tabs {
   display: flex;
-  gap: 8px;
-  padding: 0 16px;
+  gap: 10px;
+  padding: 0;
   min-width: min-content;
   flex-shrink: 0;
 }
@@ -30,41 +32,42 @@
 /* Tab Button */
 .bracket-tab {
   display: inline-flex;
+  min-height: 40px;
   align-items: center;
   justify-content: center;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 12px;
-  font-weight: 700;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #c8d7d2;
+  font-size: 0.78rem;
+  font-weight: 900;
   white-space: nowrap;
   cursor: pointer;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.09);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0;
   flex-shrink: 0;
 }
 
 .bracket-tab:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(0, 255, 136, 0.12);
+  border-color: rgba(0, 255, 136, 0.3);
+  color: var(--neon);
 }
 
 /* Active Tab */
 .bracket-tab.is-active {
-  background: linear-gradient(135deg, #e91e63, #c2185b);
-  color: #ffffff;
-  border-color: #e91e63;
-  box-shadow: 0 4px 16px rgba(233, 30, 99, 0.3);
+  background: var(--neon);
+  color: #00160b;
+  border-color: rgba(0, 255, 136, 0.42);
+  box-shadow: 0 0 28px rgba(0, 255, 136, 0.22);
 }
 
 /* Content Area */
 .bracket-tabs-content {
   animation: fadeIn 0.3s ease;
-  padding: 0 4px;
+  padding: 0;
 }
 
 @keyframes fadeIn {
@@ -82,7 +85,7 @@
 .bracket-round-content {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .bracket-round-header {
@@ -91,16 +94,16 @@
 
 .bracket-round-header h3 {
   margin: 0;
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  color: #effbf5;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0;
 }
 
 /* Mobile Bracket Matches */
 .mobile-bracket-matches {
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 
 .mobile-bracket-match {
@@ -145,20 +148,20 @@
   flex-direction: column;
   gap: 4px;
   padding: 12px 14px;
-  border: 2px solid rgba(233, 30, 99, 0.3);
+  border: 2px solid rgba(0, 255, 136, 0.24);
   border-radius: 8px;
-  background: rgba(233, 30, 99, 0.08);
+  background: rgba(0, 255, 136, 0.08);
   transition: all 0.2s ease;
 }
 
 .mobile-bracket-final-card:hover {
-  border-color: rgba(233, 30, 99, 0.6);
-  background: rgba(233, 30, 99, 0.12);
+  border-color: rgba(0, 255, 136, 0.42);
+  background: rgba(0, 255, 136, 0.12);
 }
 
 .mobile-bracket-final-card span {
   font-size: 10px;
-  color: rgba(233, 30, 99, 0.8);
+  color: rgba(0, 255, 136, 0.84);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -177,9 +180,9 @@
   gap: 10px;
   padding: 14px 12px 16px;
   margin-top: 8px;
-  border: 2px dashed rgba(233, 30, 99, 0.4);
+  border: 2px dashed rgba(0, 255, 136, 0.26);
   border-radius: 8px;
-  background: rgba(233, 30, 99, 0.1);
+  background: rgba(0, 255, 136, 0.08);
   text-align: center;
 }
 
@@ -201,13 +204,13 @@
 /* Responsive */
 @media (max-width: 480px) {
   .bracket-tabs {
-    gap: 6px;
-    padding: 0 12px;
+    gap: 8px;
   }
 
   .bracket-tab {
-    padding: 8px 12px;
-    font-size: 11px;
+    min-height: 38px;
+    padding: 0 12px;
+    font-size: 0.74rem;
   }
 
   .bracket-round-header h3 {

@@ -230,7 +230,12 @@ const DESKTOP_BRACKET_PATHS = createDesktopBracketPaths();
 
 function DesktopBracketLines() {
   return (
-    <svg className="desktop-bracket-lines" viewBox={`0 0 ${DESKTOP_BOARD.width} ${DESKTOP_BOARD.height}`} preserveAspectRatio="none" aria-hidden="true">
+    <svg
+      className="desktop-bracket-lines"
+      viewBox={`0 0 ${DESKTOP_BOARD.width} ${DESKTOP_BOARD.height}`}
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
       <g>
         {DESKTOP_BRACKET_PATHS.map((path) => (
           <path key={path} d={path} />
@@ -269,13 +274,13 @@ function VisualBracket() {
           <DesktopBracketNode key={node.id} node={node} />
         ))}
 
-        <section className="desktop-champion-stage" aria-label="Campeão">
+        <section className="desktop-champion-stage" aria-label="Campeao">
           <p>Road to 2026</p>
-          <h3>Campeão</h3>
+          <h3>Campeao</h3>
           <span>Vencedor da final</span>
           <div className="desktop-decision-grid" hidden>
             <article>
-              <strong>3º lugar</strong>
+              <strong>3 lugar</strong>
               <span>Jogo 103</span>
             </article>
             <article className="is-final">
@@ -289,7 +294,7 @@ function VisualBracket() {
           <span>Jogo 104</span>
         </article>
         <article className="desktop-center-card desktop-center-card-bronze">
-          <strong>3º lugar</strong>
+          <strong>3 lugar</strong>
           <span>Jogo 103</span>
         </article>
       </div>
@@ -314,50 +319,63 @@ export function BracketPage() {
       <Navigation page="bracket" />
 
       <div className="bracket-trophy-flow">
-        <section className="page-hero bracket-page-hero">
-          <motion.div className="bracket-page-hero-copy" initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <span className="live-chip">Mata-mata</span>
-            <div className="bracket-hero-title-row">
-              <div className="bracket-hero-text-stack">
-                <h1>Chaveamento da Copa 2026</h1>
-                <p>
-                  Caminho completo do mata-mata com confrontos por posição de classificação. Os nomes reais entram depois que a fase de grupos terminar.
-                </p>
-                <div className="hero-actions">
-                  <a href="/#schedule" className="primary-action">
-                    <ArrowLeft size={18} />
-                    Voltar aos jogos
-                  </a>
-                  <a href="/" className="secondary-action">
-                    Página inicial
-                  </a>
-                </div>
+        <section className="hero-shell bracket-hero-shell">
+          <div className="hero-copy">
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: "easeOut" }}
+              className="hero-content"
+            >
+              <span className="live-chip">Mata-mata</span>
+              <h1>Chaveamento da Copa 2026</h1>
+              <p>
+                Caminho completo do mata-mata com confrontos por posicao de classificacao. Os nomes reais entram depois
+                que a fase de grupos terminar.
+              </p>
+
+              <div className="hero-actions">
+                <a href="/#schedule" className="primary-action">
+                  <ArrowLeft size={18} />
+                  Voltar aos jogos
+                </a>
+                <a href="/" className="secondary-action">
+                  Pagina inicial
+                </a>
               </div>
-              {!mobile && (
-                <aside className="bracket-scroll-trophy">
-                  <TrophyScene className="bracket-hero-trophy-scene" />
-                </aside>
-              )}
+            </motion.div>
+
+            <div className="metrics-grid bracket-hero-metrics">
+              <article>
+                <strong>32</strong>
+                <span>vagas no mata-mata</span>
+              </article>
+              <article>
+                <strong>5</strong>
+                <span>fases ate a final</span>
+              </article>
+              <article>
+                <strong>104</strong>
+                <span>jogo da final</span>
+              </article>
             </div>
-          </motion.div>
+          </div>
+
+          <aside className="hero-visual bracket-hero-visual">
+            <div className="hero-scene bracket-hero-scene">
+              <TrophyScene className="bracket-hero-trophy-scene" />
+            </div>
+          </aside>
         </section>
 
         <section id="bracket" className="section-block bracket-section">
-          <SectionHeader
-            eyebrow="Chaveamento"
-            title="Caminho do mata-mata"
-            description="O funil começa nas oitavas, passa por quartas e semifinais, e fecha no campeão no centro."
-          />
+          <SectionHeader eyebrow="Chaveamento" title="Caminho do mata-mata" />
           {mobile ? <MobileBracketWithTabs bracket={bracket} /> : <VisualBracket />}
         </section>
       </div>
 
       <section className="section-block">
-        <SectionHeader
-          eyebrow="Detalhes"
-          title="Tabela completa"
-          description="Sequência por fase, dos 32 avos até a final."
-        />
+        <SectionHeader eyebrow="Detalhes" title="Tabela completa" description="Sequencia por fase, dos 32 avos ate a final." />
 
         <div className="bracket-grid">
           {bracket.map((phase) => (

@@ -6,6 +6,7 @@ import { BackgroundFX } from "./components/BackgroundFX";
 import { Navigation } from "./components/Navigation";
 import { GroupsSection } from "./sections/GroupsSection";
 import { Hero } from "./sections/Hero";
+import { MatchHistoryPage } from "./sections/MatchHistoryPage";
 import { ScheduleSection } from "./sections/ScheduleSection";
 import { SummaryCards } from "./sections/SummaryCards";
 import { TeamModal } from "./sections/TeamModal";
@@ -117,6 +118,7 @@ function HomePageWrapper() {
 export default function App() {
   const pathname = window.location.pathname.toLowerCase();
   const isBracketPage = pathname.includes("chaveamento");
+  const isHistoryPage = pathname.includes("historico");
   const isTeamsPage = pathname.includes("selecoes");
 
   return (
@@ -127,6 +129,8 @@ export default function App() {
           <Suspense fallback={null}>
             <BracketPage />
           </Suspense>
+        ) : isHistoryPage ? (
+          <MatchHistoryPage />
         ) : isTeamsPage ? (
           <TeamsPage />
         ) : (

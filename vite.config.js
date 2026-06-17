@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
 const SPORTMONKS_BASE_URL = "https://api.sportmonks.com/v3/football";
+const APISPORTS_BASE_URL = "https://v3.football.api-sports.io";
 
 function sportmonksDevProxy(env) {
   return {
@@ -56,6 +57,61 @@ function sportmonksDevProxy(env) {
   };
 }
 
+function apiSportsDevProxy(env) {
+  return {
+    name: "apisports-dev-proxy",
+    configureServer(server) {
+      server.middlewares.use("/api/apisports", async (request, response) => {
+        const apiKey =
+          env.APISPORT_KEY || env.APISPORTS_API_KEY || env.VITE_APISPORT_KEY || env.VITE_APISPORTS_API_KEY;
+
+        if (!apiKey) {
+          response.statusCode = 500;
+          response.setHeader("Content-Type", "application/json");
+          response.end(JSON.stringify({ message: "Configure APISPORT_KEY no .env." }));
+          return;
+        }
+
+        const requestUrl = new URL(request.url || "/", "http://localhost");
+        const path = requestUrl.searchParams.get("path");
+
+        if (!path || !path.startsWith("/") || path.startsWith("//") || path.includes("://")) {
+          response.statusCode = 400;
+          response.setHeader("Content-Type", "application/json");
+          response.end(JSON.stringify({ message: "Parametro path invalido." }));
+          return;
+        }
+
+        const target = new URL(`${APISPORTS_BASE_URL}${path}`);
+
+        requestUrl.searchParams.forEach((value, key) => {
+          if (key !== "path") {
+            target.searchParams.set(key, value);
+          }
+        });
+
+        try {
+          const apiSportsResponse = await fetch(target, {
+            headers: {
+              "x-apisports-key": apiKey
+            }
+          });
+          const body = await apiSportsResponse.text();
+
+          response.statusCode = apiSportsResponse.status;
+          response.setHeader("Content-Type", apiSportsResponse.headers.get("content-type") || "application/json");
+          response.setHeader("Cache-Control", "no-store");
+          response.end(body);
+        } catch {
+          response.statusCode = 502;
+          response.setHeader("Content-Type", "application/json");
+          response.end(JSON.stringify({ message: "Nao foi possivel conectar na API-Sports." }));
+        }
+      });
+    }
+  };
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
@@ -66,6 +122,7 @@ export default defineConfig(({ mode }) => {
   plugins: [
     react(),
     sportmonksDevProxy(env),
+    apiSportsDevProxy(env),
     VitePWA({
       registerType: "autoUpdate",
       cleanupOutdatedCaches: true,

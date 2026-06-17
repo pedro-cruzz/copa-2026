@@ -82,7 +82,7 @@ export function MobileBracketWithTabs({ bracket }) {
               ))}
             </div>
             <div className="bracket-final-trophy">
-              <TrophyScene className="mobile-final-trophy-scene" />
+              {/* <TrophyScene className="mobile-final-trophy-scene" /> */}
               <strong>Campeão da Copa 2026</strong>
             </div>
           </div>

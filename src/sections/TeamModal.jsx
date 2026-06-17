@@ -1,17 +1,31 @@
 import { useEffect, useMemo, useState } from "react";
-import { Shirt, UsersRound, X } from "lucide-react";
+import { AlertTriangle, Shirt, UsersRound, X } from "lucide-react";
 import { getTeamKits } from "../data/kits";
 import {
-  getOpenLigaFixtureTeams,
-  getOpenLigaDisplayTeamName,
-  getOpenLigaScore,
-  getOpenLigaWorldCupScoreboard,
-  normalizeOpenLigaTeam
-} from "../services/openligadb";
+  getDetailedWorldCupTeamHistory,
+  getHistoryDisplayTeamName,
+  getHistoryFixtureTeams,
+  getHistoryScore
+} from "../services/matchHistory";
 import { repairText } from "../utils/text";
 
 function getTeamName(team) {
   return typeof team === "string" ? team : team?.name || "";
+}
+
+function maskTeamHistoryErrorMessage(message) {
+  const normalized = String(message || "").toLowerCase();
+
+  if (
+    normalized.includes("request limit") ||
+    normalized.includes("limit for the day") ||
+    normalized.includes("rate limit") ||
+    normalized.includes("ids dessas selecoes")
+  ) {
+    return "Historico indisponivel no momento.";
+  }
+
+  return message || "Nao foi possivel carregar o historico da API-Sports.";
 }
 
 function KitPreview({ kit }) {
@@ -28,7 +42,8 @@ function KitPreview({ kit }) {
 
 function formatMatchDate(match) {
   const rawDate = match?.matchDateTimeUTC || match?.matchDateTime;
-  const date = new Date(rawDate);
+  const historyDate = match?.date || rawDate;
+  const date = new Date(historyDate);
 
   if (Number.isNaN(date.getTime())) {
     return "Data a confirmar";
@@ -43,9 +58,57 @@ function formatMatchDate(match) {
   });
 }
 
+function formatEventMinute(event) {
+  const elapsed = event?.time?.elapsed;
+  const extra = event?.time?.extra;
+
+  if (!elapsed) {
+    return "-";
+  }
+
+  return extra ? `${elapsed}+${extra}'` : `${elapsed}'`;
+}
+
+function getEventLabel(event) {
+  const type = String(event?.type || "").toLowerCase();
+  const detail = event?.detail ? ` - ${event.detail}` : "";
+
+  if (type === "goal") {
+    return `Gol${detail}`;
+  }
+
+  if (type === "card") {
+    return `Cartao${detail}`;
+  }
+
+  if (type === "subst") {
+    return "Substituicao";
+  }
+
+  return event?.type || "Evento";
+}
+
+function getEventPlayer(event) {
+  const player = event?.player?.name;
+  const assist = event?.assist?.name;
+
+  if (String(event?.type || "").toLowerCase() === "subst" && assist) {
+    return `${player || "Saiu"} por ${assist}`;
+  }
+
+  return [player, assist ? `(${assist})` : ""].filter(Boolean).join(" ");
+}
+
+function getStartingPlayers(lineup) {
+  const startXI = Array.isArray(lineup?.startXI) ? lineup.startXI : [];
+  return startXI.map((row) => row?.player).filter(Boolean).slice(0, 11);
+}
+
 export function TeamModal({ team, onClose }) {
   const [activeTab, setActiveTab] = useState("overview");
   const [teamMatches, setTeamMatches] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState("");
   const teamName = getTeamName(team);
   const displayName = team?.displayName || repairText(teamName);
   const kits = useMemo(() => getTeamKits(teamName), [teamName]);
@@ -53,23 +116,25 @@ export function TeamModal({ team, onClose }) {
   useEffect(() => {
     setActiveTab("overview");
     setTeamMatches([]);
+    setHistoryError("");
 
     async function fetchMatches() {
       if (!teamName) {
         return;
       }
 
+      setHistoryLoading(true);
+
       try {
-        const allMatches = await getOpenLigaWorldCupScoreboard();
-        const normalizedTeamName = normalizeOpenLigaTeam({ teamName });
-        const filtered = allMatches.filter((match) => {
-          const { home, away } = getOpenLigaFixtureTeams(match);
-          return normalizeOpenLigaTeam(home) === normalizedTeamName || normalizeOpenLigaTeam(away) === normalizedTeamName;
-        });
-        setTeamMatches(filtered);
+        const detailedMatches = await getDetailedWorldCupTeamHistory(teamName);
+        setTeamMatches(detailedMatches);
+        setHistoryError("");
       } catch (error) {
         console.error("Erro ao buscar partidas do time:", error);
         setTeamMatches([]);
+        setHistoryError(maskTeamHistoryErrorMessage(error.message));
+      } finally {
+        setHistoryLoading(false);
       }
     }
 
@@ -146,24 +211,87 @@ export function TeamModal({ team, onClose }) {
 
           {activeTab === "matches" && (
             <div className="selection-match-list">
-              {teamMatches.length === 0 ? (
+              {historyLoading ? (
+                <div className="empty-state">Carregando historico...</div>
+              ) : historyError ? (
+                <article className="inline-error">
+                  <AlertTriangle size={16} />
+                  <span>API-Sports indisponivel: {historyError}</span>
+                </article>
+              ) : teamMatches.length === 0 ? (
                 <div className="empty-state">Sem partidas encontradas.</div>
               ) : (
                 teamMatches.map((match) => {
-                  const { home, away } = getOpenLigaFixtureTeams(match);
-                  const score = getOpenLigaScore(match);
+                  const { home, away } = getHistoryFixtureTeams(match);
+                  const score = getHistoryScore(match);
+                  const events = Array.isArray(match.events) ? match.events : [];
+                  const lineups = Array.isArray(match.lineups) ? match.lineups : [];
                   return (
-                    <article className="selection-match-card" key={match.matchID}>
+                    <article className="selection-match-card" key={match.id}>
                       <header>
                         <strong>{formatMatchDate(match)}</strong>
+                        {match.status?.label && <span>{match.status.label}</span>}
                       </header>
                       <p>
-                        {getOpenLigaDisplayTeamName(home)}
+                        {getHistoryDisplayTeamName(home)}
                         <span className={score ? "live-score-pill" : "versus"}>
                           {score ? `${score.homeScore} x ${score.awayScore}` : "x"}
                         </span>
-                        {getOpenLigaDisplayTeamName(away)}
+                        {getHistoryDisplayTeamName(away)}
                       </p>
+                      {(match.venue || match.city) && (
+                        <span>{[match.venue, match.city].filter(Boolean).join(" - ")}</span>
+                      )}
+
+                      <div className="selection-match-details">
+                        <section>
+                          <h4>Eventos</h4>
+                          {events.length === 0 ? (
+                            <span className="history-empty">Sem gols, cartoes ou substituicoes registrados.</span>
+                          ) : (
+                            <ul className="history-event-list">
+                              {events.map((event, index) => (
+                                <li key={`${match.id}-event-${index}`}>
+                                  <strong>{formatEventMinute(event)}</strong>
+                                  <span>{getEventLabel(event)}</span>
+                                  <em>{getEventPlayer(event)}</em>
+                                  <small>{event?.team?.name}</small>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </section>
+
+                        <section>
+                          <h4>Escalacoes</h4>
+                          {lineups.length === 0 ? (
+                            <span className="history-empty">Escalacoes ainda nao publicadas.</span>
+                          ) : (
+                            <div className="history-lineup-grid">
+                              {lineups.map((lineup) => {
+                                const players = getStartingPlayers(lineup);
+
+                                return (
+                                  <div className="history-lineup" key={`${match.id}-${lineup?.team?.id}`}>
+                                    <strong>
+                                      {lineup?.team?.name || "Selecao"}
+                                      {lineup?.formation ? ` - ${lineup.formation}` : ""}
+                                    </strong>
+                                    <ol>
+                                      {players.map((player) => (
+                                        <li key={`${lineup?.team?.id}-${player?.id || player?.name}`}>
+                                          <span>{player?.number || "-"}</span>
+                                          {player?.name}
+                                        </li>
+                                      ))}
+                                    </ol>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </section>
+                      </div>
                     </article>
                   );
                 })
