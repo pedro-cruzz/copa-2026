@@ -10,7 +10,7 @@ import { MatchHistoryPage } from "./sections/MatchHistoryPage";
 import { ScheduleSection } from "./sections/ScheduleSection";
 import { SummaryCards } from "./sections/SummaryCards";
 import { TeamModal } from "./sections/TeamModal";
-// import { TodayMatchesSection } from "./sections/TodayMatchesSection";
+import { TodayMatchesSection } from "./sections/TodayMatchesSection";
 import { TeamsPage } from "./TeamsPage"; // nova página de seleções
 
 const BracketPage = lazy(() => 
@@ -106,7 +106,7 @@ function HomePageWrapper() {
       <Navigation page="home" />
       <Hero />
       <SummaryCards />
-      {/* <TodayMatchesSection /> */}
+      <TodayMatchesSection />
       <GroupsSection onSelectTeam={setSelectedTeam} />
       <ScheduleSection filters={filters} setFilters={setFilters} />
       <TeamModal team={selectedTeam} onClose={() => setSelectedTeam(null)} onFilterTeam={filterTeam} />

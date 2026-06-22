@@ -283,12 +283,16 @@ function getFormationNodeStyle(player, side, lineDepth, rowDensity) {
   const xRatio = Number.isFinite(row) ? (row - 1) / (safeDepth - 1) : 0;
   const perRowCount = Math.max(rowDensity?.[row] || 1, 1);
   const yRatio = perRowCount === 1 ? 0.5 : ((column || 1) - 1) / (perRowCount - 1);
-  const top = 14 + yRatio * 72;
-  const left = side === "home" ? 9 + xRatio * 36 : 91 - xRatio * 36;
+  const desktopTop = 14 + yRatio * 72;
+  const desktopLeft = side === "home" ? 9 + xRatio * 36 : 91 - xRatio * 36;
+  const mobileLeft = 14 + yRatio * 72;
+  const mobileTop = side === "home" ? 10 + xRatio * 34 : 90 - xRatio * 34;
 
   return {
-    left: `${left}%`,
-    top: `${top}%`
+    "--pitch-desktop-left": `${desktopLeft}%`,
+    "--pitch-desktop-top": `${desktopTop}%`,
+    "--pitch-mobile-left": `${mobileLeft}%`,
+    "--pitch-mobile-top": `${mobileTop}%`
   };
 }
 

@@ -49,6 +49,29 @@ function formatLastUpdated(date) {
   }).format(date);
 }
 
+function TodayMatchCard({ match, fixture }) {
+  const score = fixture ? getOpenLigaScore(fixture) : null;
+  const status = getLocalStatus(match, fixture);
+
+  return (
+    <article className={`today-match-card ${status.tone === "live" ? "is-live" : ""}`}>
+      <header>
+        <strong>{status.tone === "live" ? getOpenLigaFixtureState(fixture) : match.time}</strong>
+        <StatusBadge status={status} />
+      </header>
+      <div className="today-score-row">
+        <TeamName team={match.home} />
+        <span className={score ? "live-score-pill" : "versus"}>{score ? `${score.homeScore} x ${score.awayScore}` : "x"}</span>
+        <TeamName team={match.away} />
+      </div>
+      <div className="today-match-footer">
+        <Activity size={15} />
+        {status.tone === "live" ? "Placar atualizado automaticamente" : `Grupo ${match.group}`}
+      </div>
+    </article>
+  );
+}
+
 export function TodayMatchesSection() {
   const [todayKey, setTodayKey] = useState(() => getBrazilDateKey());
   const todayMatches = useMemo(() => matches.filter((match) => match.date === todayKey), [todayKey]);
@@ -91,11 +114,21 @@ export function TodayMatchesSection() {
     return fixture && isOpenLigaMatchInPlay(fixture);
   }).length;
 
+  const liveMatches = todayMatches.filter((match) => {
+    const fixture = openLigaFixtureForLocalMatch(scoreboard, match);
+    return fixture && isOpenLigaMatchInPlay(fixture);
+  });
+
+  const scheduledMatches = todayMatches.filter((match) => {
+    const fixture = openLigaFixtureForLocalMatch(scoreboard, match);
+    return !fixture || !isOpenLigaMatchInPlay(fixture);
+  });
+
   return (
-    <section id="today" className="section-block today-matches-section">
+    <section id="live-center" className="section-block today-matches-section">
       <SectionHeader
-        eyebrow="Hoje"
-        title="Jogos de hoje"
+        eyebrow="Central de partidas"
+        title="Ao vivo e jogos de hoje"
         right={
           <button type="button" className="secondary-action compact-action" onClick={loadScoreboard} disabled={loading}>
             <RefreshCw size={16} />
@@ -127,39 +160,42 @@ export function TodayMatchesSection() {
         </article>
       )}
 
-      <div className="today-match-grid">
-        {todayMatches.length === 0 ? (
-          <div className="empty-state">Nenhum jogo cadastrado para hoje.</div>
-        ) : (
-          todayMatches.map((match) => {
-            const fixture = openLigaFixtureForLocalMatch(scoreboard, match);
-            const score = fixture ? getOpenLigaScore(fixture) : null;
-            const status = getLocalStatus(match, fixture);
+      <div className="today-match-layout">
+        <section className="today-live-panel" aria-live="polite">
+          <div className="today-panel-heading">
+            <span className="live-indicator"><span /> Ao vivo agora</span>
+            <strong>{liveCount ? `${liveCount} partida${liveCount > 1 ? "s" : ""} em andamento` : "Sem partidas em andamento"}</strong>
+          </div>
+          {liveMatches.length ? (
+            <div className="today-match-grid live-match-grid">
+              {liveMatches.map((match) => {
+                const fixture = openLigaFixtureForLocalMatch(scoreboard, match);
+                return <TodayMatchCard key={`${match.date}-${match.time}-${match.home}`} match={match} fixture={fixture} />;
+              })}
+            </div>
+          ) : (
+            <p className="today-empty-live">Quando a bola rolar, o placar aparecerá aqui em tempo real.</p>
+          )}
+        </section>
 
-            return (
-              <article
-                key={`${match.date}-${match.time}-${match.home}`}
-                className={`today-match-card ${status.tone === "live" ? "is-live" : ""}`}
-              >
-                <header>
-                  <strong>{match.time}</strong>
-                  <StatusBadge status={status} />
-                </header>
-                <div className="today-score-row">
-                  <TeamName team={match.home} />
-                  <span className={score ? "live-score-pill" : "versus"}>
-                    {score ? `${score.homeScore} x ${score.awayScore}` : "x"}
-                  </span>
-                  <TeamName team={match.away} />
-                </div>
-                <div className="today-match-footer">
-                  <Activity size={15} />
-                  {fixture ? getOpenLigaFixtureState(fixture) : `Grupo ${match.group}`}
-                </div>
-              </article>
-            );
-          })
-        )}
+        <section className="today-schedule-panel">
+          <div className="today-panel-heading">
+            <span>Agenda do dia</span>
+            <strong>{todayMatches.length ? `${todayMatches.length} jogo${todayMatches.length > 1 ? "s" : ""}` : "Nenhum jogo hoje"}</strong>
+          </div>
+          {todayMatches.length === 0 ? (
+            <div className="empty-state">Nenhum jogo cadastrado para hoje.</div>
+          ) : scheduledMatches.length === 0 ? (
+            <p className="today-empty-live">Todos os jogos de hoje estão em andamento.</p>
+          ) : (
+            <div className="today-match-grid">
+              {scheduledMatches.map((match) => {
+                const fixture = openLigaFixtureForLocalMatch(scoreboard, match);
+                return <TodayMatchCard key={`${match.date}-${match.time}-${match.home}`} match={match} fixture={fixture} />;
+              })}
+            </div>
+          )}
+        </section>
       </div>
     </section>
   );
